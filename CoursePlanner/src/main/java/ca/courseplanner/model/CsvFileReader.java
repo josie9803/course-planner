@@ -5,6 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CsvFileReader {
+    public static final int SEMESTER_INDEX = 0;
+    public static final int SUBJECT_NAME_INDEX = 1;
+    public static final int CATALOG_NUMBER_INDEX = 2;
+    public static final int LOCATION_INDEX = 3;
+    public static final int ENROLLMENT_CAP_INDEX = 4;
+    public static final int ENROLLMENT_TOTAL_INDEX = 5;
+    public static final int INSTRUCTOR_INDEX = 6;
+    public static final int COMPONENT_INDEX = 7;
+
     List<OfferingData> offeringDataList;
 
     public CsvFileReader() {
@@ -19,19 +28,23 @@ public class CsvFileReader {
             String currentLine;
             while ((currentLine = reader.readLine()) != null) {
                 String[] data = currentLine.split(",");
-                OfferingData offeringData = new OfferingData(
-                        data[0], data[1], data[2], data[3],
-                        Integer.parseInt(data[4]), data[7],
-                        Integer.parseInt(data[5]), data[6].trim());
+                OfferingData offeringData = new OfferingData.OfferingDataBuilder()
+                        .setSemester(data[SEMESTER_INDEX])
+                        .setSubjectName(data[SUBJECT_NAME_INDEX])
+                        .setCatalogNumber(data[CATALOG_NUMBER_INDEX])
+                        .setLocation(data[LOCATION_INDEX])
+                        .setEnrollmentCap(Integer.parseInt(data[ENROLLMENT_CAP_INDEX]))
+                        .setEnrollmentTotal(Integer.parseInt(data[ENROLLMENT_TOTAL_INDEX]))
+                        .setInstructor(data[INSTRUCTOR_INDEX].trim())
+                        .setComponent(data[COMPONENT_INDEX])
+                        .build();
                 offeringDataList.add(offeringData);
             }
         } catch (IOException e) {
             exitProgram();
         }
-
-        printToTerminal();
     }
-    private void printToTerminal(){
+    public void printToTerminal(){
         for (OfferingData offeringData : offeringDataList) {
             System.out.println(offeringData.getSemester() + " " +
                     offeringData.getSubjectName() + " " +

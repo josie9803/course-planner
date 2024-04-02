@@ -16,5 +16,6 @@ public class AppController {
     public void dumpModel() {
         CsvFileReader csvFileReader = new CsvFileReader();
         csvFileReader.readCSV("data/course_data_2018.csv");
+        csvFileReader.printToTerminal();
     }
 }
