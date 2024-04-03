@@ -11,7 +11,8 @@ public class ApiOfferingDataDTO {
     public String component;
     public int enrollmentTotal;
     public String instructor;
-    public static ApiOfferingDataDTO makeFromOfferingData(OfferingData data){
+
+    public static ApiOfferingDataDTO makeFromOfferingData(OfferingData data) {
         ApiOfferingDataDTO dataDTO = new ApiOfferingDataDTO();
         dataDTO.semester = data.getSemester();
         dataDTO.subjectName = data.getSubjectName();
@@ -23,5 +24,4 @@ public class ApiOfferingDataDTO {
         dataDTO.instructor = data.getInstructor();
         return dataDTO;
     }
-
 }
