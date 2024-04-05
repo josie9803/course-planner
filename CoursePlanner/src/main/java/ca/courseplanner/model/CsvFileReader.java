@@ -13,13 +13,16 @@ public class CsvFileReader {
     public static final int INSTRUCTOR_INDEX = 6;
     public static final int COMPONENT_INDEX = 7;
 
-    private List<OfferingData> offeringDataList;
+    private List<OfferingData> rawOfferingData;
+    private List<OfferingData> processedOfferingData;
+    private List<CourseOffering> courseOfferingsList;
 
     public CsvFileReader() {
-        this.offeringDataList = new ArrayList<>();
+        this.rawOfferingData = new ArrayList<>();
+        this.courseOfferingsList = new ArrayList<>();
     }
 
-    public List<CourseOffering> readCSV(String filePath) {
+    public void readCSV(String filePath) {
         List<CourseOffering> courseOfferings = new ArrayList<>();
         File csvCoursesFile = new File(filePath);
         try {
@@ -34,15 +37,17 @@ public class CsvFileReader {
                         Integer.parseInt(data[ENROLLMENT_CAP_INDEX]), data[COMPONENT_INDEX],
                         Integer.parseInt(data[ENROLLMENT_TOTAL_INDEX]), data[INSTRUCTOR_INDEX].trim());
 
-                CourseOffering courseOffering = findOrCreateCourseOffering(courseOfferings, offeringData);
-                OfferingSection section = createOfferingSection(offeringData);
-                courseOffering.addSections(section);
+//                CourseOffering courseOffering = findOrCreateCourseOffering(courseOfferings, offeringData);
+//                OfferingSection section = createOfferingSection(offeringData);
+//                courseOffering.addSections(section);
+                rawOfferingData.add(offeringData);
+                addToProcessedOfferingDataList(offeringData);
             }
             reader.close();
         } catch (IOException e) {
             exitProgram();
         }
-        return courseOfferings;
+//        return courseOfferings;
     }
 
     private String[] parseCSVLine(String line) {
@@ -64,26 +69,67 @@ public class CsvFileReader {
         return parts.toArray(new String[0]);
     }
 
-    private CourseOffering findOrCreateCourseOffering(List<CourseOffering> courseOfferings, OfferingData offeringData) {
-        for (CourseOffering courseOffering : courseOfferings) {
-            if (courseOffering.getLocation().equals(offeringData.getLocation())) {
-                return courseOffering;
-            }
-        }
-
-        // create a new one newCourseOffering
+    private void addToProcessedOfferingDataList(OfferingData offeringData){
+        //check if the courseFromOfferingData exists?
+        //1.check courseName first
+        int alreadyExisted = 0;
+        String courseName = offeringData.getSubjectName() + offeringData.getCatalogNumber();
+//        for (CourseOffering courseOffering : courseOfferingsList){
+//            if (courseOffering.getCourseName().equals(courseName)
+//            && courseOffering.getLocation().equals(offeringData.getLocation())
+//            && courseOffering.getSemesterCode() == Long.parseLong(offeringData.getSemester()))
+//            {
+//                alreadyExisted = 1;
+//            }
+//            else {
+//                //
+//            }
+//            if (alreadyExisted == 0){
+//                CourseOffering newCourseOffering = new CourseOffering();
+//                newCourseOffering.setCourseName(courseName);
+//                newCourseOffering.setLocation(offeringData.getLocation());
+//                newCourseOffering.setInstructors(offeringData.getInstructor());
+//                newCourseOffering.setSemesterCode(Long.parseLong(offeringData.getSemester()));
+//                courseOfferingsList.add(newCourseOffering);
+//            }
+//        }
         CourseOffering newCourseOffering = new CourseOffering();
+        newCourseOffering.setCourseName(courseName);
         newCourseOffering.setLocation(offeringData.getLocation());
         newCourseOffering.setInstructors(offeringData.getInstructor());
         newCourseOffering.setSemesterCode(Long.parseLong(offeringData.getSemester()));
-
-        // Create a new Course
-        Course course = new Course(offeringData.getCatalogNumber());
-        newCourseOffering.setCourse(course);
-        courseOfferings.add(newCourseOffering);
-
-        return newCourseOffering;
+        courseOfferingsList.add(newCourseOffering);
     }
+
+    public void printCourseOfferingToTerminal(){
+        System.out.println(courseOfferingsList.size());
+//        for (CourseOffering courseOffering : courseOfferingsList) {
+//            System.out.println(courseOffering.toString());
+//            System.out.println("////////////////");
+//        }
+    }
+
+
+//    private CourseOffering findOrCreateCourseOffering(List<CourseOffering> courseOfferings, OfferingData offeringData) {
+//        for (CourseOffering courseOffering : courseOfferings) {
+//            if (courseOffering.getLocation().equals(offeringData.getLocation())) {
+//                return courseOffering;
+//            }
+//        }
+//
+//        // create a new one newCourseOffering
+//        CourseOffering newCourseOffering = new CourseOffering();
+//        newCourseOffering.setLocation(offeringData.getLocation());
+//        newCourseOffering.setInstructors(offeringData.getInstructor());
+//        newCourseOffering.setSemesterCode(Long.parseLong(offeringData.getSemester()));
+//
+//        // Create a new Course
+//        Course course = new Course(offeringData.getCatalogNumber());
+//        newCourseOffering.setCourse(course);
+//        courseOfferings.add(newCourseOffering);
+//
+//        return newCourseOffering;
+//    }
 
     private OfferingSection createOfferingSection(OfferingData offeringData) {
         String type = offeringData.getComponent();
@@ -92,31 +138,45 @@ public class CsvFileReader {
         return new OfferingSection(type, enrollmentCap, enrollmentTotal);
     }
 
-
-    public void printToTerminal(List<CourseOffering> courseOfferings) {
-        // Group offerings by course number
-        Map<String, List<CourseOffering>> offeringsByCourse = groupOfferingsByCourse(courseOfferings);
-
-        // Print course offerings
-        for (Map.Entry<String, List<CourseOffering>> entry : offeringsByCourse.entrySet()) {
-            String courseNumber = entry.getKey();
-            List<CourseOffering> offerings = entry.getValue();
-
-            System.out.println(courseNumber);
-            for (CourseOffering offering : offerings) {
-                printOffering(offering);
-            }
+    public void printOfferingDataToTerminal(){
+        System.out.println("hello");
+        for (OfferingData offeringData : rawOfferingData) {
+            System.out.println(offeringData.getSemester() + " " +
+                    offeringData.getSubjectName() + " " +
+                    offeringData.getCatalogNumber() + " " +
+                    offeringData.getLocation() + " " +
+                    offeringData.getEnrollmentCap() + " " +
+                    offeringData.getComponent() + " " +
+                    offeringData.getEnrollmentTotal() + " " +
+                    offeringData.getInstructor());
         }
     }
 
-    private Map<String, List<CourseOffering>> groupOfferingsByCourse(List<CourseOffering> courseOfferings) {
-        Map<String, List<CourseOffering>> offeringsByCourse = new HashMap<>();
-        for (CourseOffering offering : courseOfferings) {
-            String courseNumber = offering.getCourse().getCatalogNumber();
-            offeringsByCourse.computeIfAbsent(courseNumber, k -> new ArrayList<>()).add(offering);
-        }
-        return offeringsByCourse;
-    }
+
+//    public void printToTerminal(List<CourseOffering> courseOfferings) {
+//        // Group offerings by course number
+//        Map<String, List<CourseOffering>> offeringsByCourse = groupOfferingsByCourse(courseOfferings);
+//
+//        // Print course offerings
+//        for (Map.Entry<String, List<CourseOffering>> entry : offeringsByCourse.entrySet()) {
+//            String courseNumber = entry.getKey();
+//            List<CourseOffering> offerings = entry.getValue();
+//
+//            System.out.println(courseNumber);
+//            for (CourseOffering offering : offerings) {
+//                printOffering(offering);
+//            }
+//        }
+//    }
+
+//    private Map<String, List<CourseOffering>> groupOfferingsByCourse(List<CourseOffering> courseOfferings) {
+//        Map<String, List<CourseOffering>> offeringsByCourse = new HashMap<>();
+//        for (CourseOffering offering : courseOfferings) {
+//            String courseNumber = offering.getCourse().getCatalogNumber();
+//            offeringsByCourse.computeIfAbsent(courseNumber, k -> new ArrayList<>()).add(offering);
+//        }
+//        return offeringsByCourse;
+//    }
 
     private void printOffering(CourseOffering offering) {
         String semesterLocationKey = offering.getSemesterCode() + " in " + offering.getLocation();

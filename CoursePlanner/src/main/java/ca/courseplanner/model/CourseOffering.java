@@ -3,6 +3,16 @@ package ca.courseplanner.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Same as OfferingData, except:
+ * has Course: in place for "catalog number"
+ * has multiple OfferingSection: in place for "enrollmentCap, enrollmentTotal, componentCode"
+ * has Department: in place for "subject"
+ * has "year, term" extracted from "OfferingData.semester"
+ *
+ * semesterCode is semester, location is location, instructor is instructor
+ **/
+
 public class CourseOffering {
     private long courseOfferingId;
     private String location;
@@ -10,21 +20,41 @@ public class CourseOffering {
     private String term;
     private long semesterCode;
     private int year;
-    private Course course;
+    private String courseName;
+//    private Department department;
+//    private Course course;
     private List<OfferingSection> sections;
 
 
     public CourseOffering() {
-        this.course = null;
         this.sections = new ArrayList<>();
     }
 
-    public Course getCourse() {
-        return course;
+    //create 1 new CourseOffering
+    //create 1 Department(id, subject"CMPT" as OfferingData.subjectName) and attach to it
+    //
+    //create 1 Course(id, catalog"213" as OfferingData.catalog) and attach to it
+    //
+    //create 1 location(as offeringdata.location) and attach to it
+    //
+    //create 1 OR MORE Sections
+
+    public CourseOffering createCourseOfferingFromOfferingData(OfferingData offeringData){
+        this.location = offeringData.getLocation();
+        this.instructors = offeringData.getInstructor();
+        this.semesterCode = Long.parseLong(offeringData.getSemester());
+//        OfferingSection offeringSection = new OfferingSection(offeringData.getComponent(),
+//                offeringData.getEnrollmentCap(), offeringData.getEnrollmentTotal());
+//        this.sections.add(offeringSection);
+        return this;
     }
 
-    public void setCourse(Course course) {
-        this.course = course;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseName() {
+        return courseName;
     }
 
     public List<OfferingSection> getSections() {
@@ -83,11 +113,13 @@ public class CourseOffering {
     @Override
     public String toString() {
         return "CourseOffering{" +
-                "location='" + location + '\'' +
+                "courseOfferingId=" + courseOfferingId +
+                ", location='" + location + '\'' +
                 ", instructors='" + instructors + '\'' +
                 ", term='" + term + '\'' +
                 ", semesterCode=" + semesterCode +
                 ", year=" + year +
+                ", courseName='" + courseName + '\'' +
                 ", sections=" + sections +
                 '}';
     }
