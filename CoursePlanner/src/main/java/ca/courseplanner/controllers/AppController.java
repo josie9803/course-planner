@@ -1,8 +1,7 @@
 package ca.courseplanner.controllers;
 
 import ca.courseplanner.AllApiDtoClasses.ApiAboutDTO;
-import ca.courseplanner.model.CourseOffering;
-import ca.courseplanner.model.CsvFileReader;
+import ca.courseplanner.model.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,14 +19,12 @@ public class AppController {
     @GetMapping("/dump-model")
     public void dumpModel() {
         CsvFileReader csvFileReader = new CsvFileReader();
-        csvFileReader.readCSV("data/small_course_data.csv");
-       // csvFileReader.readCSV("data/small_data.csv");
-//        csvFileReader.printToTerminal();
+        csvFileReader.readCSV("data/small_data.csv");
+        List<String[]> listOfRawData = csvFileReader.getRawData();
 
-//        List<CourseOffering> courseOfferings = csvFileReader.readCSV("data/course_data_2018.csv");
-//        csvFileReader.printToTerminal(courseOfferings);
+        ProcessCsvData processCsvData = new ProcessCsvData(listOfRawData);
 
-        //csvFileReader.printOfferingDataToTerminal();
-        csvFileReader.printCourseOfferingToTerminal();
+        List<OfferingData> newList = processCsvData.getOfferingDataList();
+        Printer.printToTerminal(newList);
     }
 }
