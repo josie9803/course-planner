@@ -1,7 +1,6 @@
 package ca.courseplanner.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static ca.courseplanner.model.CsvFileReader.*;
 
@@ -37,6 +36,7 @@ public class ProcessCsvData {
                 offeringDataList.add(offeringData);
             }
         }
+        sortByComponent();
     }
 
     private void addInstructorsIfExisted(OfferingData existingOffering, String instructor) {
@@ -60,5 +60,15 @@ public class ProcessCsvData {
 
     public List<OfferingData> getOfferingDataList() {
         return offeringDataList;
+    }
+
+    private void sortByComponent() {
+        Comparator<OfferingData> makeComponentSorter = new Comparator<OfferingData>() {
+            @Override
+            public int compare(OfferingData o1, OfferingData o2) {
+                return o1.getComponent().compareTo(o2.getComponent());
+            }
+        };
+        Collections.sort(offeringDataList, makeComponentSorter);
     }
 }
