@@ -37,6 +37,8 @@ public class ProcessCsvData {
             }
         }
         sortByComponent();
+        sortByLocation();
+        sortBySemester();
     }
 
     private void addInstructorsIfExisted(OfferingData existingOffering, String instructor) {
@@ -62,6 +64,26 @@ public class ProcessCsvData {
         return offeringDataList;
     }
 
+    private void sortBySemester() {
+        Comparator<OfferingData> makeSemesterSorter = new Comparator<OfferingData>() {
+            @Override
+            public int compare(OfferingData o1, OfferingData o2) {
+                return o1.getSemester().compareTo(o2.getSemester());
+            }
+        };
+        offeringDataList.sort(makeSemesterSorter);
+    }
+
+    private void sortByLocation() {
+        Comparator<OfferingData> makeLocationSorter = new Comparator<OfferingData>() {
+            @Override
+            public int compare(OfferingData o1, OfferingData o2) {
+                return o1.getLocation().compareTo(o2.getLocation());
+            }
+        };
+        offeringDataList.sort(makeLocationSorter);
+    }
+
     private void sortByComponent() {
         Comparator<OfferingData> makeComponentSorter = new Comparator<OfferingData>() {
             @Override
@@ -69,6 +91,6 @@ public class ProcessCsvData {
                 return o1.getComponent().compareTo(o2.getComponent());
             }
         };
-        Collections.sort(offeringDataList, makeComponentSorter);
+        offeringDataList.sort(makeComponentSorter);
     }
 }
