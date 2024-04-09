@@ -21,8 +21,6 @@ public class CourseOffering {
     private long semesterCode;
     private int year;
     private String courseName;
-//    private Department department;
-//    private Course course;
     private List<OfferingSection> sections;
 
 
@@ -30,22 +28,10 @@ public class CourseOffering {
         this.sections = new ArrayList<>();
     }
 
-    //create 1 new CourseOffering
-    //create 1 Department(id, subject"CMPT" as OfferingData.subjectName) and attach to it
-    //
-    //create 1 Course(id, catalog"213" as OfferingData.catalog) and attach to it
-    //
-    //create 1 location(as offeringdata.location) and attach to it
-    //
-    //create 1 OR MORE Sections
-
     public CourseOffering createCourseOfferingFromOfferingData(OfferingData offeringData){
         this.location = offeringData.getLocation();
         this.instructors = offeringData.getInstructor();
         this.semesterCode = Long.parseLong(offeringData.getSemester());
-//        OfferingSection offeringSection = new OfferingSection(offeringData.getComponent(),
-//                offeringData.getEnrollmentCap(), offeringData.getEnrollmentTotal());
-//        this.sections.add(offeringSection);
         return this;
     }
 

@@ -55,7 +55,8 @@ public class OfferingData {
     public String getInstructor() {
         return instructor;
     }
-    public String getCourseName(){
+
+    public String getCourseName() {
         return subjectName + " " + catalogNumber;
     }
 

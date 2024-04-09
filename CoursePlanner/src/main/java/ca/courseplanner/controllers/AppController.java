@@ -13,13 +13,12 @@ import java.util.List;
 public class AppController {
     @GetMapping("/about")
     public ApiAboutDTO getAboutInfo() {
-        ApiAboutDTO aboutInfo = new ApiAboutDTO("Amazing course planner", "Nathan & Josie");
-        return aboutInfo;
+        return new ApiAboutDTO("Amazing course planner", "Nathan & Josie");
     }
     @GetMapping("/dump-model")
     public void dumpModel() {
         CsvFileReader csvFileReader = new CsvFileReader();
-        csvFileReader.readCSV("data/small_data.csv");
+        csvFileReader.readCSV("data/course_data_2018.csv");
         List<String[]> listOfRawData = csvFileReader.getRawData();
 
         ProcessCsvData processCsvData = new ProcessCsvData(listOfRawData);

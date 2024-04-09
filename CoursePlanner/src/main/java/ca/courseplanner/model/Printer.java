@@ -22,18 +22,12 @@ public class Printer {
             } else if (offeringData.getCourseName().equals(currentCourseName)
                     && offeringData.getLocation().equals(currentLocation)
                     && offeringData.getSemester().equals(currentSemester)) {
-//                if (offeringData.getInstructor().isEmpty()) {
-//                    printSectionInfo(offeringData);
-//                    printCourseType(offeringData);
-////                    System.out.println("hello");
-//                } else {
+
                     printCourseType(offeringData);
-//                }
             } else if (offeringData.getCourseName().equals(currentCourseName)
                     && (!offeringData.getLocation().equals(currentLocation)
                     || !offeringData.getSemester().equals(currentSemester))) {
-//                currentLocation = offeringData.getLocation();
-//                currentSemester = offeringData.getSemester();
+
                 printSectionInfo(offeringData);
                 printCourseType(offeringData);
             }

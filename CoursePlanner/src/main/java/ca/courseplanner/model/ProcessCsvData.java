@@ -44,29 +44,51 @@ public class ProcessCsvData {
         sortByCourse();
     }
 
-    //get instructor -> check if readInData is null
-    //if null:
-    //1. instructorList is empty -> setInstructor("")
-    //2. instructorList is not empty -> setInstructor(currentInstructorList)
-    //else if readInData is not null
-    //check if instructorList already contained readInData
-    //if not contain, then check (if contain, then dothing):
-    //1. instructorList is empty -> setInstructor(readInData)
-    //2. instructorList is not empty -> setInstructor(currentInstructorList + ',' + readInData)
-
     private void addInstructorsIfNotExisted(OfferingData existingOffering, String instructor) {
-//        if (!existingOffering.getInstructor().contains(instructor)) {
-//            String instructors = existingOffering.getInstructor();
-//            existingOffering.setInstructor(instructor + ", " + instructors);
-//        }
-        String currentInstructorList = existingOffering.getInstructor();
-        if (!currentInstructorList.contains(instructor)) {
-            if (!currentInstructorList.isEmpty()) {
-                currentInstructorList += ", ";
+        if (instructor.isEmpty()) {
+            for (OfferingData offering : offeringDataList) {
+                if (offering.getSubjectName().equals(existingOffering.getSubjectName()) &&
+                        offering.getCatalogNumber().equals(existingOffering.getCatalogNumber()) &&
+                        offering.getSemester().equals(existingOffering.getSemester()) &&
+                        offering.getLocation().equals(existingOffering.getLocation()) &&
+                        !offering.getInstructor().isEmpty()) {
+                    instructor = offering.getInstructor();
+                    break;
+                }
             }
-            currentInstructorList += instructor;
-            existingOffering.setInstructor(currentInstructorList);
         }
+
+        for (OfferingData offering : offeringDataList) {
+            if (offering.getSubjectName().equals(existingOffering.getSubjectName()) &&
+                    offering.getCatalogNumber().equals(existingOffering.getCatalogNumber()) &&
+                    offering.getSemester().equals(existingOffering.getSemester()) &&
+                    offering.getLocation().equals(existingOffering.getLocation())) {
+                String currentInstructorList = getCurrentInstructorList(instructor, offering);
+                offering.setInstructor(currentInstructorList);
+            }
+        }
+    }
+
+    private String getCurrentInstructorList(String instructor, OfferingData offering) {
+        StringBuilder currentInstructorList = new StringBuilder(offering.getInstructor());
+        String[] currentInstructors = currentInstructorList.toString().split(", ");
+        String[] newInstructors = instructor.split(", ");
+        for (String newInstructor : newInstructors) {
+            boolean isInList = false;
+            for (String existingInstructor : currentInstructors) {
+                if (existingInstructor.equals(newInstructor)) {
+                    isInList = true;
+                    break;
+                }
+            }
+            if (!isInList) {
+                if (!currentInstructorList.isEmpty()) {
+                    currentInstructorList.append(", ");
+                }
+                currentInstructorList.append(newInstructor);
+            }
+        }
+        return currentInstructorList.toString();
     }
 
     private OfferingData findExistingOffering(String subjectName, String catalogNumber, String semester,
