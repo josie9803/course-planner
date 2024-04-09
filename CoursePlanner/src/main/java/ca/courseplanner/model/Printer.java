@@ -23,7 +23,7 @@ public class Printer {
                     && offeringData.getLocation().equals(currentLocation)
                     && offeringData.getSemester().equals(currentSemester)) {
 
-                    printCourseType(offeringData);
+                printCourseType(offeringData);
             } else if (offeringData.getCourseName().equals(currentCourseName)
                     && (!offeringData.getLocation().equals(currentLocation)
                     || !offeringData.getSemester().equals(currentSemester))) {
