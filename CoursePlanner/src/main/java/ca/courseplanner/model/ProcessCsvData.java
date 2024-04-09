@@ -14,21 +14,23 @@ public class ProcessCsvData {
 
     public void processCsvData(List<String[]> data) {
         for (String[] rowData : data) {
-            String semester = rowData[SEMESTER_INDEX];
-            String subjectName = rowData[SUBJECT_NAME_INDEX];
-            String catalogNumber = rowData[CATALOG_NUMBER_INDEX];
-            String location = rowData[LOCATION_INDEX];
+            String semester = rowData[SEMESTER_INDEX].trim();
+            String subjectName = rowData[SUBJECT_NAME_INDEX].trim();
+            String catalogNumber = rowData[CATALOG_NUMBER_INDEX].trim();
+            String location = rowData[LOCATION_INDEX].trim();
             int enrollmentCap = Integer.parseInt(rowData[ENROLLMENT_CAP_INDEX]);
             int enrollmentTotal = Integer.parseInt(rowData[ENROLLMENT_TOTAL_INDEX]);
-            String instructor = rowData[INSTRUCTOR_INDEX];
-            String component = rowData[COMPONENT_INDEX];
+            String instructor = (rowData[INSTRUCTOR_INDEX].trim().equals("<null>")
+                    || rowData[INSTRUCTOR_INDEX].trim().equals("(null)"))
+                    ? "" : rowData[INSTRUCTOR_INDEX].trim();
+            String component = rowData[COMPONENT_INDEX].trim();
 
             OfferingData existingOffering = findExistingOffering(subjectName, catalogNumber,
                     semester, location, component);
             if (existingOffering != null) {
                 existingOffering.setEnrollmentCap(existingOffering.getEnrollmentCap() + enrollmentCap);
                 existingOffering.setEnrollmentTotal(existingOffering.getEnrollmentTotal() + enrollmentTotal);
-                addInstructorsIfExisted(existingOffering, instructor);
+                addInstructorsIfNotExisted(existingOffering, instructor);
             } else {
                 OfferingData offeringData = new OfferingData(semester, subjectName,
                         catalogNumber, location,
@@ -39,12 +41,31 @@ public class ProcessCsvData {
         sortByComponent();
         sortByLocation();
         sortBySemester();
+        sortByCourse();
     }
 
-    private void addInstructorsIfExisted(OfferingData existingOffering, String instructor) {
-        if (!existingOffering.getInstructor().contains(instructor)) {
-            String instructors = existingOffering.getInstructor();
-            existingOffering.setInstructor(instructors + ", " + instructor);
+    //get instructor -> check if readInData is null
+    //if null:
+    //1. instructorList is empty -> setInstructor("")
+    //2. instructorList is not empty -> setInstructor(currentInstructorList)
+    //else if readInData is not null
+    //check if instructorList already contained readInData
+    //if not contain, then check (if contain, then dothing):
+    //1. instructorList is empty -> setInstructor(readInData)
+    //2. instructorList is not empty -> setInstructor(currentInstructorList + ',' + readInData)
+
+    private void addInstructorsIfNotExisted(OfferingData existingOffering, String instructor) {
+//        if (!existingOffering.getInstructor().contains(instructor)) {
+//            String instructors = existingOffering.getInstructor();
+//            existingOffering.setInstructor(instructor + ", " + instructors);
+//        }
+        String currentInstructorList = existingOffering.getInstructor();
+        if (!currentInstructorList.contains(instructor)) {
+            if (!currentInstructorList.isEmpty()) {
+                currentInstructorList += ", ";
+            }
+            currentInstructorList += instructor;
+            existingOffering.setInstructor(currentInstructorList);
         }
     }
 
@@ -62,6 +83,16 @@ public class ProcessCsvData {
 
     public List<OfferingData> getOfferingDataList() {
         return offeringDataList;
+    }
+
+    private void sortByCourse() {
+        Comparator<OfferingData> makeCourseSorter = new Comparator<OfferingData>() {
+            @Override
+            public int compare(OfferingData o1, OfferingData o2) {
+                return o1.getCourseName().compareTo(o2.getCourseName());
+            }
+        };
+        offeringDataList.sort(makeCourseSorter);
     }
 
     private void sortBySemester() {

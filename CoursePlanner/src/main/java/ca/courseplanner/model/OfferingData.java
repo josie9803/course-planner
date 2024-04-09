@@ -55,6 +55,9 @@ public class OfferingData {
     public String getInstructor() {
         return instructor;
     }
+    public String getCourseName(){
+        return subjectName + " " + catalogNumber;
+    }
 
     public void setSemester(String semester) {
         this.semester = semester;
