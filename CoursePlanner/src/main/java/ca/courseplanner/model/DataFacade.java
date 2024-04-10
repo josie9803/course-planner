@@ -4,12 +4,15 @@ import java.util.*;
 
 import static ca.courseplanner.model.CsvFileReader.*;
 
-public class ProcessCsvData {
+public class DataFacade {
     private List<OfferingData> offeringDataList;
+    private List<Department> departmentList;
 
-    public ProcessCsvData(List<String[]> data) {
+    public DataFacade(List<String[]> data) {
         this.offeringDataList = new ArrayList<>();
         processCsvData(data);
+        processDepartments();
+        processCoursesInDepartment();
     }
 
     public void processCsvData(List<String[]> data) {
@@ -107,13 +110,17 @@ public class ProcessCsvData {
         return offeringDataList;
     }
 
-    public List<Department> getUniqueDepartments() {
-        List<Department> uniqueDepartmentList = new ArrayList<>();
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
+
+    public void processDepartments() {
+        departmentList = new ArrayList<>();
         for (OfferingData offeringData : offeringDataList) {
             String departmentName = offeringData.getSubjectName();
             boolean departmentExists = false;
 
-            for (Department department : uniqueDepartmentList) {
+            for (Department department : departmentList) {
                 if (department.getName().equals(departmentName)) {
                     departmentExists = true;
                     break;
@@ -121,10 +128,32 @@ public class ProcessCsvData {
             }
 
             if (!departmentExists) {
-                uniqueDepartmentList.add(new Department(departmentName));
+                departmentList.add(new Department(departmentName));
             }
         }
-        return uniqueDepartmentList;
+    }
+
+    private void processCoursesInDepartment() {
+        for (OfferingData offeringData : offeringDataList) {
+            String subjectName = offeringData.getSubjectName();
+            String courseNumber = offeringData.getCatalogNumber();
+
+            Department department = findDepartment(subjectName);
+            Course course = new Course(courseNumber);
+
+            department.addCourse(course);
+        }
+    }
+
+    private Department findDepartment(String name) {
+        for (Department department : departmentList) {
+            if (department.getName().equals(name)) {
+                return department;
+            }
+        }
+        Department department = new Department(name);
+        departmentList.add(department);
+        return department;
     }
 
     private void sortByCourse() {
