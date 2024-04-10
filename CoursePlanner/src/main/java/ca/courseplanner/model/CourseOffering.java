@@ -9,52 +9,35 @@ import java.util.List;
  * has multiple OfferingSection: in place for "enrollmentCap, enrollmentTotal, componentCode"
  * has Department: in place for "subject"
  * has "year, term" extracted from "OfferingData.semester"
- *
+ * <p>
  * semesterCode is semester, location is location, instructor is instructor
  **/
 
 public class CourseOffering {
-    private long courseOfferingId;
     private String location;
     private String instructors;
     private String term;
     private long semesterCode;
     private int year;
-    private String courseName;
-    private List<OfferingSection> sections;
+//    private List<OfferingSection> sections;
 
-
-    public CourseOffering() {
-        this.sections = new ArrayList<>();
+    public CourseOffering(String location, String instructors, String term, long semesterCode,
+                          int year) {
+        this.location = location;
+        this.instructors = instructors;
+        this.term = term;
+        this.semesterCode = semesterCode;
+        this.year = year;
+//        this.sections = sections;
     }
 
-    public CourseOffering createCourseOfferingFromOfferingData(OfferingData offeringData){
-        this.location = offeringData.getLocation();
-        this.instructors = offeringData.getInstructor();
-        this.semesterCode = Long.parseLong(offeringData.getSemester());
-        return this;
-    }
+//    public List<OfferingSection> getSections() {
+//        return sections;
+//    }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public List<OfferingSection> getSections() {
-        return sections;
-    }
-
-    public void addSections(OfferingSection section) {
-        sections.add(section);
-    }
-
-
-    public void setSections(List<OfferingSection> sections) {
-        this.sections = sections;
-    }
+//    public void setSections(List<OfferingSection> sections) {
+//        this.sections = sections;
+//    }
 
     public String getLocation() {
         return location;
@@ -99,14 +82,11 @@ public class CourseOffering {
     @Override
     public String toString() {
         return "CourseOffering{" +
-                "courseOfferingId=" + courseOfferingId +
                 ", location='" + location + '\'' +
                 ", instructors='" + instructors + '\'' +
                 ", term='" + term + '\'' +
                 ", semesterCode=" + semesterCode +
                 ", year=" + year +
-                ", courseName='" + courseName + '\'' +
-                ", sections=" + sections +
                 '}';
     }
 }

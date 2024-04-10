@@ -15,7 +15,15 @@ public class DataFacade {
         processCoursesInDepartment();
     }
 
-    public void processCsvData(List<String[]> data) {
+    public List<OfferingData> getOfferingDataList() {
+        return offeringDataList;
+    }
+
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
+
+    private void processCsvData(List<String[]> data) {
         for (String[] rowData : data) {
             String semester = rowData[SEMESTER_INDEX].trim();
             String subjectName = rowData[SUBJECT_NAME_INDEX].trim();
@@ -45,6 +53,25 @@ public class DataFacade {
         sortByLocation();
         sortBySemester();
         sortByCourse();
+    }
+
+    public void processDepartments() {
+        departmentList = new ArrayList<>();
+        for (OfferingData offeringData : offeringDataList) {
+            String departmentName = offeringData.getSubjectName();
+            boolean departmentExists = false;
+
+            for (Department department : departmentList) {
+                if (department.getName().equals(departmentName)) {
+                    departmentExists = true;
+                    break;
+                }
+            }
+
+            if (!departmentExists) {
+                departmentList.add(new Department(departmentName));
+            }
+        }
     }
 
     private void addInstructorsIfNotExisted(OfferingData existingOffering, String instructor) {
@@ -106,42 +133,27 @@ public class DataFacade {
         return null;
     }
 
-    public List<OfferingData> getOfferingDataList() {
-        return offeringDataList;
-    }
-
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public void processDepartments() {
-        departmentList = new ArrayList<>();
-        for (OfferingData offeringData : offeringDataList) {
-            String departmentName = offeringData.getSubjectName();
-            boolean departmentExists = false;
-
-            for (Department department : departmentList) {
-                if (department.getName().equals(departmentName)) {
-                    departmentExists = true;
-                    break;
-                }
-            }
-
-            if (!departmentExists) {
-                departmentList.add(new Department(departmentName));
-            }
-        }
-    }
-
     private void processCoursesInDepartment() {
         for (OfferingData offeringData : offeringDataList) {
             String subjectName = offeringData.getSubjectName();
-            String courseNumber = offeringData.getCatalogNumber();
+            String catalogNumber = offeringData.getCatalogNumber();
 
             Department department = findDepartment(subjectName);
-            Course course = new Course(courseNumber);
+            if (department == null) {
+                department = new Department(subjectName);
+                departmentList.add(department);
+            }
 
-            department.addCourse(course);
+            Course course = department.findCourseByCatalogNumber(catalogNumber);
+            if (course == null) {
+                course = new Course(catalogNumber);
+                department.addCourse(course);
+            }
+
+            CourseOffering offering = new CourseOffering(offeringData.getLocation(),
+                    offeringData.getInstructor(), offeringData.getTerm(),
+                    offeringData.getSemesterCode(), offeringData.getYear());
+            course.addCourseOffering(offering);
         }
     }
 
@@ -151,9 +163,7 @@ public class DataFacade {
                 return department;
             }
         }
-        Department department = new Department(name);
-        departmentList.add(department);
-        return department;
+        return null;
     }
 
     private void sortByCourse() {

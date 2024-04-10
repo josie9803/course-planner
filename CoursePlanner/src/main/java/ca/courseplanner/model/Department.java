@@ -7,22 +7,30 @@ public class Department {
     private String name;
     private List<Course> courseList;
 
-    public Department(String name){
+    public Department(String name) {
         this.name = name;
         this.courseList = new ArrayList<>();
     }
 
     public void addCourse(Course course) {
-        for (Course currentCourse : courseList) {
-            if (currentCourse.getCatalogNumber().equals(course.getCatalogNumber())) {
-                return;
-            }
-        }
         courseList.add(course);
     }
 
     public List<Course> getCourseList() {
         return courseList;
+    }
+
+    public Course getCourseByIndex(int index) {
+        return courseList.get(index);
+    }
+
+    public Course findCourseByCatalogNumber(String catalogNumber) {
+        for (Course course : courseList) {
+            if (course.getCatalogNumber().equals(catalogNumber)) {
+                return course;
+            }
+        }
+        return null;
     }
 
     public String getName() {

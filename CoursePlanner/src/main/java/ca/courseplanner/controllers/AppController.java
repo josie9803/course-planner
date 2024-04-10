@@ -2,6 +2,7 @@ package ca.courseplanner.controllers;
 
 import ca.courseplanner.AllApiDtoClasses.ApiAboutDTO;
 import ca.courseplanner.AllApiDtoClasses.ApiCourseDTO;
+import ca.courseplanner.AllApiDtoClasses.ApiCourseOfferingDTO;
 import ca.courseplanner.AllApiDtoClasses.ApiDepartmentDTO;
 import ca.courseplanner.model.*;
 import jakarta.annotation.PostConstruct;
@@ -60,5 +61,19 @@ public class AppController {
             courseDTO.add(dto);
         }
         return courseDTO;
+    }
+
+    @GetMapping("departments/{deptId}/courses/{courseId}/offerings")
+    public List<ApiCourseOfferingDTO> getCourseOfferings(@PathVariable("deptId") int departmentId,
+                                                         @PathVariable("courseId") int courseId) {
+        Department department = departmentList.get(departmentId);
+        Course course = department.getCourseByIndex(courseId);
+        List<ApiCourseOfferingDTO> courseOfferingDTO = new ArrayList<>();
+        int courseOfferingId = 0;
+        for (CourseOffering courseOffering : course.getCourseOfferings()) {
+            ApiCourseOfferingDTO dto = ApiCourseOfferingDTO.makeFromCourseOffering(courseOffering, courseOfferingId++);
+            courseOfferingDTO.add(dto);
+        }
+        return courseOfferingDTO;
     }
 }
