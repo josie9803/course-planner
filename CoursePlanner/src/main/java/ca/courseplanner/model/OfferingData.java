@@ -92,6 +92,30 @@ public class OfferingData {
         this.enrollmentTotal = enrollmentTotal;
     }
 
+    public String getTerm() {
+        char termCode = semester.charAt(semester.length() - 1);
+        return switch (termCode) {
+            case '1' -> "Spring";
+            case '4' -> "Summer";
+            case '7' -> "Fall";
+            default -> "Unknown";
+        };
+    }
+
+    public long getSemesterCode() {
+        return Long.parseLong(semester);
+    }
+
+    public int getYear() {
+        if (semester.length() == 4) {
+            int X = Integer.parseInt(semester.substring(0, 1));
+            int Y = Integer.parseInt(semester.substring(1, 2));
+            int Z = Integer.parseInt(semester.substring(2, 3));
+            return 1900 + 100 * X + 10 * Y + Z;
+        }
+        return 0;
+    }
+
     @Override
     public String toString() {
         return "OfferingData{" +
