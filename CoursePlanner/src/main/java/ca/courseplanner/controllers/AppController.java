@@ -1,10 +1,12 @@
 package ca.courseplanner.controllers;
 
 import ca.courseplanner.AllApiDtoClasses.ApiAboutDTO;
+import ca.courseplanner.AllApiDtoClasses.ApiCourseDTO;
 import ca.courseplanner.AllApiDtoClasses.ApiDepartmentDTO;
 import ca.courseplanner.model.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,9 +25,9 @@ public class AppController {
         csvFileReader.readCSV("data/course_data_2018.csv");
         List<String[]> listOfRawData = csvFileReader.getRawData();
 
-        ProcessCsvData processCsvData = new ProcessCsvData(listOfRawData);
-        offeringDataList = processCsvData.getOfferingDataList();
-        departmentList = processCsvData.getUniqueDepartments();
+        DataFacade dataFacade = new DataFacade(listOfRawData);
+        offeringDataList = dataFacade.getOfferingDataList();
+        departmentList = dataFacade.getDepartmentList();
     }
 
     @GetMapping("/about")
@@ -46,5 +48,17 @@ public class AppController {
             departmentDTO.add(dto);
         }
         return departmentDTO;
+    }
+
+    @GetMapping("/departments/{id}/courses")
+    public List<ApiCourseDTO> getCourses(@PathVariable("id") int departmentId) {
+        Department department = departmentList.get(departmentId);
+        List<ApiCourseDTO> courseDTO = new ArrayList<>();
+        int courseId = 0;
+        for (Course course : department.getCourseList()) {
+            ApiCourseDTO dto = ApiCourseDTO.makeFromCourse(course, courseId++);
+            courseDTO.add(dto);
+        }
+        return courseDTO;
     }
 }
