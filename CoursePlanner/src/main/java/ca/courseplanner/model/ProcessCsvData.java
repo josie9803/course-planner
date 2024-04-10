@@ -107,6 +107,26 @@ public class ProcessCsvData {
         return offeringDataList;
     }
 
+    public List<Department> getUniqueDepartments() {
+        List<Department> uniqueDepartmentList = new ArrayList<>();
+        for (OfferingData offeringData : offeringDataList) {
+            String departmentName = offeringData.getSubjectName();
+            boolean departmentExists = false;
+
+            for (Department department : uniqueDepartmentList) {
+                if (department.getName().equals(departmentName)) {
+                    departmentExists = true;
+                    break;
+                }
+            }
+
+            if (!departmentExists) {
+                uniqueDepartmentList.add(new Department(departmentName));
+            }
+        }
+        return uniqueDepartmentList;
+    }
+
     private void sortByCourse() {
         Comparator<OfferingData> makeCourseSorter = new Comparator<OfferingData>() {
             @Override
