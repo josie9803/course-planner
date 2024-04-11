@@ -23,6 +23,19 @@ public class Course {
         return courseOfferings;
     }
 
+    public CourseOffering getCourseOfferingByIndex(int index) {
+        return courseOfferings.get(index);
+    }
+
+    public CourseOffering getOfferingByKey(String key) {
+        for (CourseOffering offering : courseOfferings) {
+            if (offering.getOfferingKey().equals(key)) {
+                return offering;
+            }
+        }
+        return null;
+    }
+
     public String getCatalogNumber() {
         return catalogNumber;
     }

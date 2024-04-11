@@ -138,7 +138,7 @@ public class DataFacade {
             String subjectName = offeringData.getSubjectName();
             String catalogNumber = offeringData.getCatalogNumber();
 
-            Department department = findDepartment(subjectName);
+            Department department = findDepartmentBySubjectName(subjectName);
             if (department == null) {
                 department = new Department(subjectName);
                 departmentList.add(department);
@@ -150,14 +150,22 @@ public class DataFacade {
                 department.addCourse(course);
             }
 
-            CourseOffering offering = new CourseOffering(offeringData.getLocation(),
-                    offeringData.getInstructor(), offeringData.getTerm(),
-                    offeringData.getSemesterCode(), offeringData.getYear());
-            course.addCourseOffering(offering);
+            String offeringKey = offeringData.getSemesterCode() + offeringData.getLocation();
+            CourseOffering offering = course.getOfferingByKey(offeringKey);
+            if (offering == null) {
+                offering = new CourseOffering(offeringKey, offeringData.getLocation(),
+                        offeringData.getInstructor(), offeringData.getTerm(),
+                        offeringData.getSemesterCode(), offeringData.getYear());
+                course.addCourseOffering(offering);
+            }
+
+            OfferingSection section = new OfferingSection(offeringData.getComponent(),
+                    offeringData.getEnrollmentCap(), offeringData.getEnrollmentTotal());
+            offering.addOfferingSection(section);
         }
     }
 
-    private Department findDepartment(String name) {
+    private Department findDepartmentBySubjectName(String name) {
         for (Department department : departmentList) {
             if (department.getName().equals(name)) {
                 return department;
