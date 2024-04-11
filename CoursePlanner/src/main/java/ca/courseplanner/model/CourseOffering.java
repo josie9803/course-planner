@@ -1,6 +1,7 @@
 package ca.courseplanner.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,30 +15,35 @@ import java.util.List;
  **/
 
 public class CourseOffering {
+    private String offeringKey;
     private String location;
     private String instructors;
     private String term;
     private long semesterCode;
     private int year;
-//    private List<OfferingSection> sections;
+    private List<OfferingSection> offeringSections;
 
-    public CourseOffering(String location, String instructors, String term, long semesterCode,
-                          int year) {
+    public CourseOffering(String offeringKey, String location, String instructors, String term,
+                          long semesterCode, int year) {
+        this.offeringKey = offeringKey;
         this.location = location;
         this.instructors = instructors;
         this.term = term;
         this.semesterCode = semesterCode;
         this.year = year;
-//        this.sections = sections;
+        this.offeringSections = new ArrayList<>();
+    }
+    public String getOfferingKey() {
+        return offeringKey;
     }
 
-//    public List<OfferingSection> getSections() {
-//        return sections;
-//    }
+    public void addOfferingSection(OfferingSection offeringSection) {
+        offeringSections.add(offeringSection);
+    }
 
-//    public void setSections(List<OfferingSection> sections) {
-//        this.sections = sections;
-//    }
+    public List<OfferingSection> getOfferingSections() {
+        return offeringSections;
+    }
 
     public String getLocation() {
         return location;
@@ -82,11 +88,12 @@ public class CourseOffering {
     @Override
     public String toString() {
         return "CourseOffering{" +
-                ", location='" + location + '\'' +
+                "location='" + location + '\'' +
                 ", instructors='" + instructors + '\'' +
                 ", term='" + term + '\'' +
                 ", semesterCode=" + semesterCode +
                 ", year=" + year +
+                ", offeringSections=" + offeringSections +
                 '}';
     }
 }

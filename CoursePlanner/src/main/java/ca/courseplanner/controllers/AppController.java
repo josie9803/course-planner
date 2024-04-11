@@ -1,11 +1,9 @@
 package ca.courseplanner.controllers;
 
-import ca.courseplanner.AllApiDtoClasses.ApiAboutDTO;
-import ca.courseplanner.AllApiDtoClasses.ApiCourseDTO;
-import ca.courseplanner.AllApiDtoClasses.ApiCourseOfferingDTO;
-import ca.courseplanner.AllApiDtoClasses.ApiDepartmentDTO;
+import ca.courseplanner.AllApiDtoClasses.*;
 import ca.courseplanner.model.*;
 import jakarta.annotation.PostConstruct;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +61,7 @@ public class AppController {
         return courseDTO;
     }
 
-    @GetMapping("departments/{deptId}/courses/{courseId}/offerings")
+    @GetMapping("/departments/{deptId}/courses/{courseId}/offerings")
     public List<ApiCourseOfferingDTO> getCourseOfferings(@PathVariable("deptId") int departmentId,
                                                          @PathVariable("courseId") int courseId) {
         Department department = departmentList.get(departmentId);
@@ -75,5 +73,20 @@ public class AppController {
             courseOfferingDTO.add(dto);
         }
         return courseOfferingDTO;
+    }
+
+    @GetMapping("/departments/{deptId}/courses/{courseId}/offerings/{offeringId}")
+    public List<ApiOfferingSectionDTO> getOfferingSections(@PathVariable("deptId") int departmentId,
+                                                           @PathVariable("courseId") int courseId,
+                                                           @PathVariable("offeringId") int offeringId) {
+        Department department = departmentList.get(departmentId);
+        Course course = department.getCourseByIndex(courseId);
+        CourseOffering offering = course.getCourseOfferingByIndex(offeringId);
+        List<ApiOfferingSectionDTO> offeringSectionDTO = new ArrayList<>();
+        for (OfferingSection section : offering.getOfferingSections()) {
+            ApiOfferingSectionDTO dto = ApiOfferingSectionDTO.makeFromOfferingSection(section);
+            offeringSectionDTO.add(dto);
+        }
+        return offeringSectionDTO;
     }
 }

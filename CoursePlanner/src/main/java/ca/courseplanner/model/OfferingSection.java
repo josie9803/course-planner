@@ -19,11 +19,6 @@ public class OfferingSection {
         this.type = type;
     }
 
-    public void addEnrollment(int total, int cap) {
-        this.enrollmentTotal += total;
-        this.enrollmentCap += cap;
-    }
-
     public int getEnrollmentCap() {
         return enrollmentCap;
     }
@@ -38,5 +33,14 @@ public class OfferingSection {
 
     public void setEnrollmentTotal(int enrollmentTotal) {
         this.enrollmentTotal = enrollmentTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "OfferingSection{" +
+                "type='" + type + '\'' +
+                ", enrollmentCap=" + enrollmentCap +
+                ", enrollmentTotal=" + enrollmentTotal +
+                '}';
     }
 }
