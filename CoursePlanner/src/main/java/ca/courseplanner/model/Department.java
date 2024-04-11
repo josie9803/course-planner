@@ -24,15 +24,6 @@ public class Department {
         return courseList.get(index);
     }
 
-    public Course findCourseByCatalogNumber(String catalogNumber) {
-        for (Course course : courseList) {
-            if (course.getCatalogNumber().equals(catalogNumber)) {
-                return course;
-            }
-        }
-        return null;
-    }
-
     public String getName() {
         return name;
     }

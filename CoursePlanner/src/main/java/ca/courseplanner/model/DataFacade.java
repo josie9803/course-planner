@@ -74,6 +74,83 @@ public class DataFacade {
         }
     }
 
+    private void processCoursesInDepartment() {
+        for (OfferingData offeringData : offeringDataList) {
+            addCourseOffering(offeringData);
+        }
+    }
+
+    public void addCourseOffering(OfferingData data) {
+        Department department = findDepartment(data.getSubjectName());
+        if (department == null) {
+            department = new Department(data.getSubjectName());
+            departmentList.add(department);
+        }
+
+        Course course = findCourse(department, data.getCatalogNumber());
+        if (course == null) {
+            course = new Course(data.getCatalogNumber());
+            department.addCourse(course);
+        }
+
+        CourseOffering offering = findOffering(course, data);
+        if (offering == null) {
+            offering = new CourseOffering(generateOfferingKey(data), data.getLocation(),
+                    data.getInstructor(), data.getTerm(), data.getSemesterCode(), data.getYear());
+            course.addCourseOffering(offering);
+        }
+
+        addOrUpdateSection(offering, data);
+    }
+
+    private Department findDepartment(String subjectName) {
+        for (Department department : departmentList) {
+            if (department.getName().equals(subjectName)) {
+                return department;
+            }
+        }
+        return null;
+    }
+
+    private Course findCourse(Department department, String catalogNumber) {
+        for (Course course : department.getCourseList()) {
+            if (course.getCatalogNumber().equals(catalogNumber)) {
+                return course;
+            }
+        }
+        return null;
+    }
+
+    private CourseOffering findOffering(Course course, OfferingData data) {
+        String offeringKey = generateOfferingKey(data);
+        for (CourseOffering offering : course.getCourseOfferings()) {
+            if (offering.getOfferingKey().equals(offeringKey)) {
+                return offering;
+            }
+        }
+        return null;
+    }
+
+    private void addOrUpdateSection(CourseOffering offering, OfferingData data) {
+        OfferingSection section = findSection(offering, data.getComponent());
+        if (section != null) {
+            section.setEnrollmentCap(data.getEnrollmentCap());
+            section.setEnrollmentTotal(data.getEnrollmentTotal());
+        } else {
+            section = new OfferingSection(data.getComponent(), data.getEnrollmentCap(), data.getEnrollmentTotal());
+            offering.addOfferingSection(section);
+        }
+    }
+
+    private OfferingSection findSection(CourseOffering offering, String componentType) {
+        for (OfferingSection section : offering.getOfferingSections()) {
+            if (section.getType().equals(componentType)) {
+                return section;
+            }
+        }
+        return null;
+    }
+
     private void addInstructorsIfNotExisted(OfferingData existingOffering, String instructor) {
         if (instructor.isEmpty()) {
             for (OfferingData offering : offeringDataList) {
@@ -133,45 +210,8 @@ public class DataFacade {
         return null;
     }
 
-    private void processCoursesInDepartment() {
-        for (OfferingData offeringData : offeringDataList) {
-            String subjectName = offeringData.getSubjectName();
-            String catalogNumber = offeringData.getCatalogNumber();
-
-            Department department = findDepartmentBySubjectName(subjectName);
-            if (department == null) {
-                department = new Department(subjectName);
-                departmentList.add(department);
-            }
-
-            Course course = department.findCourseByCatalogNumber(catalogNumber);
-            if (course == null) {
-                course = new Course(catalogNumber);
-                department.addCourse(course);
-            }
-
-            String offeringKey = offeringData.getSemesterCode() + offeringData.getLocation();
-            CourseOffering offering = course.getOfferingByKey(offeringKey);
-            if (offering == null) {
-                offering = new CourseOffering(offeringKey, offeringData.getLocation(),
-                        offeringData.getInstructor(), offeringData.getTerm(),
-                        offeringData.getSemesterCode(), offeringData.getYear());
-                course.addCourseOffering(offering);
-            }
-
-            OfferingSection section = new OfferingSection(offeringData.getComponent(),
-                    offeringData.getEnrollmentCap(), offeringData.getEnrollmentTotal());
-            offering.addOfferingSection(section);
-        }
-    }
-
-    private Department findDepartmentBySubjectName(String name) {
-        for (Department department : departmentList) {
-            if (department.getName().equals(name)) {
-                return department;
-            }
-        }
-        return null;
+    private String generateOfferingKey(OfferingData data) {
+        return data.getSemesterCode() + data.getLocation();
     }
 
     private void sortByCourse() {

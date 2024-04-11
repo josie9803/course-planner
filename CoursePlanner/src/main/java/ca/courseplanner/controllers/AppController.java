@@ -3,11 +3,8 @@ package ca.courseplanner.controllers;
 import ca.courseplanner.AllApiDtoClasses.*;
 import ca.courseplanner.model.*;
 import jakarta.annotation.PostConstruct;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.List;
 public class AppController {
     private List<OfferingData> offeringDataList = new ArrayList<>();
     private List<Department> departmentList = new ArrayList<>();
+    DataFacade dataFacade;
 
     @PostConstruct
     public void initData() {
@@ -24,7 +22,7 @@ public class AppController {
         csvFileReader.readCSV("data/course_data_2018.csv");
         List<String[]> listOfRawData = csvFileReader.getRawData();
 
-        DataFacade dataFacade = new DataFacade(listOfRawData);
+        dataFacade = new DataFacade(listOfRawData);
         offeringDataList = dataFacade.getOfferingDataList();
         departmentList = dataFacade.getDepartmentList();
     }
@@ -88,5 +86,17 @@ public class AppController {
             offeringSectionDTO.add(dto);
         }
         return offeringSectionDTO;
+    }
+
+    @PostMapping("/addoffering")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiOfferingSectionDTO addOffering(@RequestBody ApiOfferingDataDTO newOfferingData) {
+        dataFacade.addCourseOffering(ApiOfferingDataDTO.toOfferingData(newOfferingData));
+        OfferingSection newSection = new OfferingSection(
+                newOfferingData.getComponent(),
+                newOfferingData.getEnrollmentCap(),
+                newOfferingData.getEnrollmentTotal()
+        );
+        return ApiOfferingSectionDTO.makeFromOfferingSection(newSection);
     }
 }
