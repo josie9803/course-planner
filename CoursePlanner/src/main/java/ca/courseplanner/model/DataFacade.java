@@ -1,5 +1,10 @@
 package ca.courseplanner.model;
 
+import ca.courseplanner.model.sort.SortCourseByCatalogNumber;
+import ca.courseplanner.model.sort.SortCourseOfferingBySemesterCode;
+import ca.courseplanner.model.sort.SortDepartmentByName;
+import ca.courseplanner.model.sort.SortOfferingSectionByType;
+
 import java.util.*;
 
 import static ca.courseplanner.model.CsvFileReader.*;
@@ -85,12 +90,15 @@ public class DataFacade {
         if (department == null) {
             department = new Department(data.getSubjectName());
             departmentList.add(department);
+            departmentList.sort(new SortDepartmentByName());
         }
 
         Course course = findCourse(department, data.getCatalogNumber());
         if (course == null) {
             course = new Course(data.getCatalogNumber());
             department.addCourse(course);
+            List<Course> courseList = department.getCourseList();
+            courseList.sort(new SortCourseByCatalogNumber());
         }
 
         CourseOffering offering = findOffering(course, data);
@@ -98,6 +106,8 @@ public class DataFacade {
             offering = new CourseOffering(generateOfferingKey(data), data.getLocation(),
                     data.getInstructor(), data.getTerm(), data.getSemesterCode(), data.getYear());
             course.addCourseOffering(offering);
+            List<CourseOffering> courseOfferingList = course.getCourseOfferings();
+            courseOfferingList.sort(new SortCourseOfferingBySemesterCode());
         }
 
         addOrUpdateSection(offering, data);
@@ -139,6 +149,8 @@ public class DataFacade {
         } else {
             section = new OfferingSection(data.getComponent(), data.getEnrollmentCap(), data.getEnrollmentTotal());
             offering.addOfferingSection(section);
+            List<OfferingSection> offeringSectionList = offering.getOfferingSections();
+            offeringSectionList.sort(new SortOfferingSectionByType());
         }
     }
 
