@@ -31,16 +31,4 @@ public class ApiOfferingDataDTO {
                 offering.enrollmentCap, offering.component,
                 offering.enrollmentTotal, offering.instructor);
     }
-
-    public String getComponent() {
-        return component;
-    }
-
-    public int getEnrollmentCap() {
-        return enrollmentCap;
-    }
-
-    public int getEnrollmentTotal() {
-        return enrollmentTotal;
-    }
 }

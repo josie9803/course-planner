@@ -81,11 +81,11 @@ public class DataFacade {
 
     private void processCoursesInDepartment() {
         for (OfferingData offeringData : offeringDataList) {
-            addCourseOffering(offeringData);
+            processOfferingData(offeringData);
         }
     }
 
-    public void addCourseOffering(OfferingData data) {
+    public void processOfferingData(OfferingData data) {
         Department department = findDepartment(data.getSubjectName());
         if (department == null) {
             department = new Department(data.getSubjectName());
@@ -102,18 +102,47 @@ public class DataFacade {
         }
 
         CourseOffering offering = findOffering(course, data);
+        boolean isNewOffering = false;
         if (offering == null) {
             offering = new CourseOffering(generateOfferingKey(data), data.getLocation(),
                     data.getInstructor(), data.getTerm(), data.getSemesterCode(), data.getYear());
+            isNewOffering = true;
             course.addCourseOffering(offering);
             List<CourseOffering> courseOfferingList = course.getCourseOfferings();
             courseOfferingList.sort(new SortCourseOfferingBySemesterCode());
         }
 
-        addOrUpdateSection(offering, data);
+        boolean newSectionUpdated = updateOrCreateSection(offering, data);
+        if (isNewOffering || newSectionUpdated) {
+            Date date = new Date();
+            course.notifyObservers(date + ": Added section " + data.getComponent() +
+                    " with enrollment (" + data.getEnrollmentTotal() + " / " + data.getEnrollmentCap() + ") " +
+                    "to offering " + data.getTerm() + " " + data.getYear());
+        }
     }
 
-    private Department findDepartment(String subjectName) {
+    private boolean updateOrCreateSection(CourseOffering offering, OfferingData data) {
+        OfferingSection existingSection = findSection(offering, data.getComponent());
+        if (existingSection != null) {
+            int initialCap = existingSection.getEnrollmentCap();
+            int initialTotal = existingSection.getEnrollmentTotal();
+
+            existingSection.setEnrollmentCap(initialCap + data.getEnrollmentCap());
+            existingSection.setEnrollmentTotal(initialTotal + data.getEnrollmentTotal());
+
+            return initialCap != existingSection.getEnrollmentCap() ||
+                    initialTotal != existingSection.getEnrollmentTotal();
+        } else {
+            OfferingSection newSection = new OfferingSection(data.getComponent(),
+                    data.getEnrollmentCap(), data.getEnrollmentTotal());
+            offering.addOfferingSection(newSection);
+            List<OfferingSection> offeringSectionList = offering.getOfferingSections();
+            offeringSectionList.sort(new SortOfferingSectionByType());
+            return true;
+        }
+    }
+
+    public Department findDepartment(String subjectName) {
         for (Department department : departmentList) {
             if (department.getName().equals(subjectName)) {
                 return department;
@@ -122,7 +151,7 @@ public class DataFacade {
         return null;
     }
 
-    private Course findCourse(Department department, String catalogNumber) {
+    public Course findCourse(Department department, String catalogNumber) {
         for (Course course : department.getCourseList()) {
             if (course.getCatalogNumber().equals(catalogNumber)) {
                 return course;
@@ -131,7 +160,7 @@ public class DataFacade {
         return null;
     }
 
-    private CourseOffering findOffering(Course course, OfferingData data) {
+    public CourseOffering findOffering(Course course, OfferingData data) {
         String offeringKey = generateOfferingKey(data);
         for (CourseOffering offering : course.getCourseOfferings()) {
             if (offering.getOfferingKey().equals(offeringKey)) {
@@ -141,20 +170,7 @@ public class DataFacade {
         return null;
     }
 
-    private void addOrUpdateSection(CourseOffering offering, OfferingData data) {
-        OfferingSection section = findSection(offering, data.getComponent());
-        if (section != null) {
-            section.setEnrollmentCap(data.getEnrollmentCap());
-            section.setEnrollmentTotal(data.getEnrollmentTotal());
-        } else {
-            section = new OfferingSection(data.getComponent(), data.getEnrollmentCap(), data.getEnrollmentTotal());
-            offering.addOfferingSection(section);
-            List<OfferingSection> offeringSectionList = offering.getOfferingSections();
-            offeringSectionList.sort(new SortOfferingSectionByType());
-        }
-    }
-
-    private OfferingSection findSection(CourseOffering offering, String componentType) {
+    public OfferingSection findSection(CourseOffering offering, String componentType) {
         for (OfferingSection section : offering.getOfferingSections()) {
             if (section.getType().equals(componentType)) {
                 return section;

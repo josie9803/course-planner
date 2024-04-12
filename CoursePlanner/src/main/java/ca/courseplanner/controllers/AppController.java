@@ -15,6 +15,7 @@ public class AppController {
     private List<OfferingData> offeringDataList = new ArrayList<>();
     private List<Department> departmentList = new ArrayList<>();
     DataFacade dataFacade;
+    WatcherManager manager = new WatcherManager();
 
     @PostConstruct
     public void initData() {
@@ -91,12 +92,54 @@ public class AppController {
     @PostMapping("/addoffering")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiOfferingSectionDTO addOffering(@RequestBody ApiOfferingDataDTO newOfferingData) {
-        dataFacade.addCourseOffering(ApiOfferingDataDTO.toOfferingData(newOfferingData));
-        OfferingSection newSection = new OfferingSection(
-                newOfferingData.getComponent(),
-                newOfferingData.getEnrollmentCap(),
-                newOfferingData.getEnrollmentTotal()
-        );
-        return ApiOfferingSectionDTO.makeFromOfferingSection(newSection);
+        OfferingData offeringData = ApiOfferingDataDTO.toOfferingData(newOfferingData);
+        dataFacade.processOfferingData(offeringData);
+
+        Department department = dataFacade.findDepartment(offeringData.getSubjectName());
+        Course course = dataFacade.findCourse(department, offeringData.getCatalogNumber());
+        CourseOffering offering = dataFacade.findOffering(course, offeringData);
+        OfferingSection updatedSection = dataFacade.findSection(offering, offeringData.getComponent());
+
+        return ApiOfferingSectionDTO.makeFromOfferingSection(updatedSection);
+    }
+
+    @GetMapping("/watchers")
+    public List<ApiWatcherDTO> getWatchers() {
+        List<Watcher> watchers = manager.getWatchers();
+        List<ApiWatcherDTO> watcherDTO = new ArrayList<>();
+        int watcherId = 1;
+        for (Watcher watcher : watchers) {
+            watcherDTO.add(ApiWatcherDTO.makeFromWatcher(watcher, departmentList, watcherId++));
+        }
+        return watcherDTO;
+    }
+
+    @PostMapping("/watchers")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiWatcherDTO createWatcher(@RequestBody ApiWatcherCreateDTO watcherCreateDTO) {
+        WatcherCreate watcherCreate = ApiWatcherCreateDTO.toWatcherCreate(watcherCreateDTO);
+        int deptId = (int) watcherCreate.getDeptId();
+        int courseId = (int) watcherCreate.getCourseId();
+        Department department = departmentList.get(deptId);
+        Course course = department.getCourseByIndex(courseId);
+
+        Watcher watcher = new Watcher(department, course);
+        manager.addWatcher(watcher);
+
+        int watcherId = manager.getWatchers().indexOf(watcher);
+
+        return ApiWatcherDTO.makeFromWatcher(watcher, departmentList, watcherId);
+    }
+
+    @GetMapping("/watchers/{id}")
+    public ApiWatcherDTO getOneWatcher(@PathVariable("id") int watcherId) {
+        Watcher watcher = manager.getWatcherById(watcherId);
+        return ApiWatcherDTO.makeFromWatcher(watcher, departmentList, watcherId);
+    }
+
+    @DeleteMapping("/watchers/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWatcher(@PathVariable("id") int watcherId) {
+        manager.removeWatcherById(watcherId);
     }
 }
