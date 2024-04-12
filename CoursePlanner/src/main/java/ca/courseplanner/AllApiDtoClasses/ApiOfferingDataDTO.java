@@ -24,4 +24,23 @@ public class ApiOfferingDataDTO {
         dataDTO.instructor = data.getInstructor();
         return dataDTO;
     }
+
+    public static OfferingData toOfferingData(ApiOfferingDataDTO offering) {
+        return new OfferingData(offering.semester, offering.subjectName,
+                offering.catalogNumber, offering.location,
+                offering.enrollmentCap, offering.component,
+                offering.enrollmentTotal, offering.instructor);
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public int getEnrollmentCap() {
+        return enrollmentCap;
+    }
+
+    public int getEnrollmentTotal() {
+        return enrollmentTotal;
+    }
 }
