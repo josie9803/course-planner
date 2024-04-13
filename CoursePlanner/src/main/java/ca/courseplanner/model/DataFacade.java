@@ -1,13 +1,10 @@
 package ca.courseplanner.model;
 
-import ca.courseplanner.model.sort.SortCourseByCatalogNumber;
-import ca.courseplanner.model.sort.SortCourseOfferingBySemesterCode;
-import ca.courseplanner.model.sort.SortDepartmentByName;
-import ca.courseplanner.model.sort.SortOfferingSectionByType;
+import ca.courseplanner.model.sort.*;
 
 import java.util.*;
 
-import static ca.courseplanner.model.CsvFileReader.*;
+import static ca.courseplanner.model.filehandling.CsvFileReader.*;
 
 public class DataFacade {
     private List<OfferingData> offeringDataList;
@@ -41,11 +38,11 @@ public class DataFacade {
                     ? "" : rowData[INSTRUCTOR_INDEX].trim();
             String component = rowData[COMPONENT_INDEX].trim();
 
-            OfferingData existingOffering = findExistingOffering(subjectName, catalogNumber,
+            OfferingData existingOffering = findExistingOfferingData(subjectName, catalogNumber,
                     semester, location, component);
             if (existingOffering != null) {
-                existingOffering.setEnrollmentCap(existingOffering.getEnrollmentCap() + enrollmentCap);
-                existingOffering.setEnrollmentTotal(existingOffering.getEnrollmentTotal() + enrollmentTotal);
+                existingOffering.addEnrollmentCap(enrollmentCap);
+                existingOffering.addEnrollmentTotal(enrollmentTotal);
                 addInstructorsIfNotExisted(existingOffering, instructor);
             } else {
                 OfferingData offeringData = new OfferingData(semester, subjectName,
@@ -54,13 +51,16 @@ public class DataFacade {
                 offeringDataList.add(offeringData);
             }
         }
-        sortByComponent();
-        sortByLocation();
-        sortBySemester();
-        sortByCourse();
+        sortOfferingDataList();
+    }
+    private void sortOfferingDataList(){
+        offeringDataList.sort(new SortOfferingDataByComponent());
+        offeringDataList.sort(new SortOfferingDataByLocation());
+        offeringDataList.sort(new SortOfferingDataBySemester());
+        offeringDataList.sort(new SortOfferingDataByCourseName());
     }
 
-    public void processDepartments() {
+    private void processDepartments() {
         departmentList = new ArrayList<>();
         for (OfferingData offeringData : offeringDataList) {
             String departmentName = offeringData.getSubjectName();
@@ -93,7 +93,7 @@ public class DataFacade {
             departmentList.sort(new SortDepartmentByName());
         }
 
-        Course course = findCourse(department, data.getCatalogNumber());
+        Course course = department.findCourse(data.getCatalogNumber());
         if (course == null) {
             course = new Course(data.getCatalogNumber());
             department.addCourse(course);
@@ -101,10 +101,11 @@ public class DataFacade {
             courseList.sort(new SortCourseByCatalogNumber());
         }
 
-        CourseOffering offering = findOffering(course, data);
+        CourseOffering offering = course.findCourseOffering(data.getSemester(), data.getLocation());
         boolean isNewOffering = false;
         if (offering == null) {
-            offering = new CourseOffering(generateOfferingKey(data), data.getLocation(),
+            String offeringKey = data.getSemesterCode() + data.getLocation();
+            offering = new CourseOffering(offeringKey, data.getLocation(),
                     data.getInstructor(), data.getTerm(), data.getSemesterCode(), data.getYear());
             isNewOffering = true;
             course.addCourseOffering(offering);
@@ -122,13 +123,13 @@ public class DataFacade {
     }
 
     private boolean updateOrCreateSection(CourseOffering offering, OfferingData data) {
-        OfferingSection existingSection = findSection(offering, data.getComponent());
+        OfferingSection existingSection = offering.findSection(data.getComponent());
         if (existingSection != null) {
             int initialCap = existingSection.getEnrollmentCap();
             int initialTotal = existingSection.getEnrollmentTotal();
 
-            existingSection.setEnrollmentCap(initialCap + data.getEnrollmentCap());
-            existingSection.setEnrollmentTotal(initialTotal + data.getEnrollmentTotal());
+            existingSection.addEnrollmentCap(data.getEnrollmentCap());
+            existingSection.addEnrollmentTotal(data.getEnrollmentTotal());
 
             return initialCap != existingSection.getEnrollmentCap() ||
                     initialTotal != existingSection.getEnrollmentTotal();
@@ -146,34 +147,6 @@ public class DataFacade {
         for (Department department : departmentList) {
             if (department.getName().equals(subjectName)) {
                 return department;
-            }
-        }
-        return null;
-    }
-
-    public Course findCourse(Department department, String catalogNumber) {
-        for (Course course : department.getCourseList()) {
-            if (course.getCatalogNumber().equals(catalogNumber)) {
-                return course;
-            }
-        }
-        return null;
-    }
-
-    public CourseOffering findOffering(Course course, OfferingData data) {
-        String offeringKey = generateOfferingKey(data);
-        for (CourseOffering offering : course.getCourseOfferings()) {
-            if (offering.getOfferingKey().equals(offeringKey)) {
-                return offering;
-            }
-        }
-        return null;
-    }
-
-    public OfferingSection findSection(CourseOffering offering, String componentType) {
-        for (OfferingSection section : offering.getOfferingSections()) {
-            if (section.getType().equals(componentType)) {
-                return section;
             }
         }
         return null;
@@ -226,7 +199,7 @@ public class DataFacade {
         return currentInstructorList.toString();
     }
 
-    private OfferingData findExistingOffering(String subjectName, String catalogNumber, String semester,
+    private OfferingData findExistingOfferingData(String subjectName, String catalogNumber, String semester,
                                               String location, String component) {
         for (OfferingData offering : offeringDataList) {
             if (offering.getSubjectName().equals(subjectName) && offering.getCatalogNumber().equals(catalogNumber)
@@ -236,49 +209,5 @@ public class DataFacade {
             }
         }
         return null;
-    }
-
-    private String generateOfferingKey(OfferingData data) {
-        return data.getSemesterCode() + data.getLocation();
-    }
-
-    private void sortByCourse() {
-        Comparator<OfferingData> makeCourseSorter = new Comparator<OfferingData>() {
-            @Override
-            public int compare(OfferingData o1, OfferingData o2) {
-                return o1.getCourseName().compareTo(o2.getCourseName());
-            }
-        };
-        offeringDataList.sort(makeCourseSorter);
-    }
-
-    private void sortBySemester() {
-        Comparator<OfferingData> makeSemesterSorter = new Comparator<OfferingData>() {
-            @Override
-            public int compare(OfferingData o1, OfferingData o2) {
-                return o1.getSemester().compareTo(o2.getSemester());
-            }
-        };
-        offeringDataList.sort(makeSemesterSorter);
-    }
-
-    private void sortByLocation() {
-        Comparator<OfferingData> makeLocationSorter = new Comparator<OfferingData>() {
-            @Override
-            public int compare(OfferingData o1, OfferingData o2) {
-                return o1.getLocation().compareTo(o2.getLocation());
-            }
-        };
-        offeringDataList.sort(makeLocationSorter);
-    }
-
-    private void sortByComponent() {
-        Comparator<OfferingData> makeComponentSorter = new Comparator<OfferingData>() {
-            @Override
-            public int compare(OfferingData o1, OfferingData o2) {
-                return o1.getComponent().compareTo(o2.getComponent());
-            }
-        };
-        offeringDataList.sort(makeComponentSorter);
     }
 }

@@ -15,24 +15,18 @@ public class OfferingSection {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public int getEnrollmentCap() {
         return enrollmentCap;
     }
-
-    public void setEnrollmentCap(int enrollmentCap) {
-        this.enrollmentCap = enrollmentCap;
+    public void addEnrollmentCap(int enrollmentCap){
+        this.enrollmentCap += enrollmentCap;
+    }
+    public void addEnrollmentTotal(int enrollmentTotal){
+        this.enrollmentTotal += enrollmentTotal;
     }
 
     public int getEnrollmentTotal() {
         return enrollmentTotal;
-    }
-
-    public void setEnrollmentTotal(int enrollmentTotal) {
-        this.enrollmentTotal = enrollmentTotal;
     }
 
     @Override

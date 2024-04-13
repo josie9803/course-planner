@@ -1,4 +1,4 @@
-package ca.courseplanner.model;
+package ca.courseplanner.model.filehandling;
 
 import java.io.*;
 import java.util.*;

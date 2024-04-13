@@ -3,6 +3,9 @@ package ca.courseplanner.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Immutable class
+ */
 public class Department {
     private String name;
     private List<Course> courseList;
@@ -16,6 +19,14 @@ public class Department {
         courseList.add(course);
     }
 
+    public Course findCourse(String catalogNumber) {
+        for (Course course : courseList) {
+            if (course.getCatalogNumber().equals(catalogNumber)) {
+                return course;
+            }
+        }
+        return null;
+    }
     public List<Course> getCourseList() {
         return courseList;
     }
@@ -26,10 +37,6 @@ public class Department {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
