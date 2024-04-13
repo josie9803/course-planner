@@ -5,13 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Same as OfferingData, except:
- * has Course: in place for "catalog number"
- * has multiple OfferingSection: in place for "enrollmentCap, enrollmentTotal, componentCode"
- * has Department: in place for "subject"
- * has "year, term" extracted from "OfferingData.semester"
- * <p>
- * semesterCode is semester, location is location, instructor is instructor
+ * Immutable class
  **/
 
 public class CourseOffering {
@@ -44,45 +38,33 @@ public class CourseOffering {
     public List<OfferingSection> getOfferingSections() {
         return offeringSections;
     }
+    public OfferingSection findSection(String componentType) {
+        for (OfferingSection section : offeringSections) {
+            if (section.getType().equals(componentType)) {
+                return section;
+            }
+        }
+        return null;
+    }
 
     public String getLocation() {
         return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
     }
 
     public String getInstructors() {
         return instructors;
     }
 
-    public void setInstructors(String instructors) {
-        this.instructors = instructors;
-    }
-
     public String getTerm() {
         return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
     }
 
     public long getSemesterCode() {
         return semesterCode;
     }
 
-    public void setSemesterCode(long semesterCode) {
-        this.semesterCode = semesterCode;
-    }
-
     public int getYear() {
         return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ca.courseplanner.model;
+package ca.courseplanner.model.watcher;
 
 import java.util.ArrayList;
 import java.util.List;

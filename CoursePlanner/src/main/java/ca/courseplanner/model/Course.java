@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * The course “number”. May be a number like 213, or a string like 105W or 1XX.
+ * Immutable class
  **/
 public class Course implements CourseSubject {
     private String catalogNumber;
@@ -24,6 +24,15 @@ public class Course implements CourseSubject {
 
     public void addCourseOffering(CourseOffering courseOffering) {
         courseOfferings.add(courseOffering);
+    }
+    public CourseOffering findCourseOffering(String semester, String location) {
+        String offeringKey = semester + location;
+        for (CourseOffering offering : courseOfferings) {
+            if (offering.getOfferingKey().equals(offeringKey)) {
+                return offering;
+            }
+        }
+        return null;
     }
 
     public List<CourseOffering> getCourseOfferings() {

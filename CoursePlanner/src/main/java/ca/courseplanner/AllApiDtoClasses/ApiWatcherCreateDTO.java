@@ -1,6 +1,6 @@
 package ca.courseplanner.AllApiDtoClasses;
 
-import ca.courseplanner.model.WatcherCreate;
+import ca.courseplanner.model.watcher.WatcherCreate;
 
 public final class ApiWatcherCreateDTO {
     public long deptId;

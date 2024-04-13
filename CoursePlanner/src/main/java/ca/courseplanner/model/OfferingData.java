@@ -60,36 +60,14 @@ public class OfferingData {
         return subjectName + " " + catalogNumber;
     }
 
-    public void setSemester(String semester) {
-        this.semester = semester;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public void setInstructor(String instructor) {
         this.instructor = instructor;
     }
-
-    public void setSubjectName(String subjectName) {
-        this.subjectName = subjectName;
+    public void addEnrollmentCap(int enrollmentCap) {
+        this.enrollmentCap += enrollmentCap;
     }
-
-    public void setCatalogNumber(String catalogNumber) {
-        this.catalogNumber = catalogNumber;
-    }
-
-    public void setComponent(String component) {
-        this.component = component;
-    }
-
-    public void setEnrollmentCap(int enrollmentCap) {
-        this.enrollmentCap = enrollmentCap;
-    }
-
-    public void setEnrollmentTotal(int enrollmentTotal) {
-        this.enrollmentTotal = enrollmentTotal;
+    public void addEnrollmentTotal(int enrollmentTotal) {
+        this.enrollmentTotal += enrollmentTotal;
     }
 
     public String getTerm() {

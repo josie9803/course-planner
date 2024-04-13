@@ -1,4 +1,4 @@
-package ca.courseplanner.model;
+package ca.courseplanner.model.watcher;
 
 public class WatcherCreate {
     private long deptId;

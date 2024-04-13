@@ -1,6 +1,6 @@
 package ca.courseplanner.AllApiDtoClasses;
 import ca.courseplanner.model.Department;
-import ca.courseplanner.model.Watcher;
+import ca.courseplanner.model.watcher.Watcher;
 
 import java.util.List;
 

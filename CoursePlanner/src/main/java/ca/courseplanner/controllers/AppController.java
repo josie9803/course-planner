@@ -2,6 +2,11 @@ package ca.courseplanner.controllers;
 
 import ca.courseplanner.AllApiDtoClasses.*;
 import ca.courseplanner.model.*;
+import ca.courseplanner.model.filehandling.CsvFileReader;
+import ca.courseplanner.model.filehandling.Printer;
+import ca.courseplanner.model.watcher.Watcher;
+import ca.courseplanner.model.watcher.WatcherCreate;
+import ca.courseplanner.model.watcher.WatcherManager;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +45,9 @@ public class AppController {
     @GetMapping("/departments")
     public List<ApiDepartmentDTO> getDepartments() {
         List<ApiDepartmentDTO> departmentDTO = new ArrayList<>();
-        for (int i = 0; i < departmentList.size(); i++) {
-            Department department = departmentList.get(i);
-            ApiDepartmentDTO dto = ApiDepartmentDTO.makeFromDepartment(department, i);
+        int departmentId = 0;
+        for (Department department : departmentList) {
+            ApiDepartmentDTO dto = ApiDepartmentDTO.makeFromDepartment(department, departmentId++);
             departmentDTO.add(dto);
         }
         return departmentDTO;
@@ -96,10 +101,9 @@ public class AppController {
         dataFacade.processOfferingData(offeringData);
 
         Department department = dataFacade.findDepartment(offeringData.getSubjectName());
-        Course course = dataFacade.findCourse(department, offeringData.getCatalogNumber());
-        CourseOffering offering = dataFacade.findOffering(course, offeringData);
-        OfferingSection updatedSection = dataFacade.findSection(offering, offeringData.getComponent());
-
+        Course course = department.findCourse(offeringData.getCatalogNumber());
+        CourseOffering offering = course.findCourseOffering(offeringData.getSemester(), offeringData.getLocation());
+        OfferingSection updatedSection = offering.findSection(offeringData.getComponent());
         return ApiOfferingSectionDTO.makeFromOfferingSection(updatedSection);
     }
 

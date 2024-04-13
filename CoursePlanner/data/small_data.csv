@@ -12,3 +12,5 @@ SEMESTER,SUBJECT,CATALOGNUMBER,LOCATION,ENROLMENTCAPACITY,ENROLMENTTOTAL,INSTRUC
 1147,CMPT,250,SURREY,24,24,Brian Fraser,LAB
 1147,CMPT,250,SURREY,24,23,Brian Fraser,LAB
 1147,CMPT,250,SURREY,10,10,Brian Fraser,LAB
+1084,CMPT    ,250,HRBRCNTR  ,30,28,. Faculty                                                                                                                                                                                                                                                 ,LEC
+1084,CMPT    ,250,HRBRCNTR  ,43,28,<null>,LAB
