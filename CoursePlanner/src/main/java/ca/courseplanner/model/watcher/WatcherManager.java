@@ -25,7 +25,7 @@ public class WatcherManager {
 
     public void removeWatcherById(int id) {
         int actualIndex = id - 1;
-        if (actualIndex < 0 || actualIndex > watchers.size()) {
+        if (actualIndex < 0 || actualIndex > watchers.size() - 1) {
             throw new IllegalArgumentException();
         }
         watchers.remove(actualIndex);
