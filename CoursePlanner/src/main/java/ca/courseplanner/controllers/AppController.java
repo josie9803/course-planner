@@ -8,9 +8,14 @@ import ca.courseplanner.model.watcher.Watcher;
 import ca.courseplanner.model.watcher.WatcherCreate;
 import ca.courseplanner.model.watcher.WatcherManager;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,10 +57,38 @@ public class AppController {
         }
         return departmentDTO;
     }
-
+    private Department getDepartmentByIdOrThrow(int departmentId){
+        if (departmentId >= 0 && departmentId < departmentList.size()) {
+            return departmentList.get(departmentId);
+        }
+        else{
+            //String errorMessage = "Department ID " + departmentId + " not found.";
+            //throw new NotFoundException(errorMessage);
+            throw new IllegalArgumentException();
+        }
+    }
+    private Course getCourseByIdOrThrow(Department department, int courseId){
+        Course course = department.getCourseById(courseId);
+        if (course == null){
+//            String errorMessage = "Course ID " + courseId + " not found.";
+//            throw new NotFoundException(errorMessage);
+            throw new IllegalArgumentException();
+        }
+        return course;
+    }
+    private CourseOffering getCourseOfferingByIdOrThrow(Course course, int courseOfferingId){
+        CourseOffering courseOffering = course.getCourseOfferingById(courseOfferingId);
+        if (courseOffering == null){
+            //String errorMessage = "Course Offering ID " + courseOfferingId + " not found.";
+            //throw new NotFoundException(errorMessage);
+            throw new IllegalArgumentException();
+        }
+        return courseOffering;
+    }
     @GetMapping("/departments/{id}/courses")
     public List<ApiCourseDTO> getCourses(@PathVariable("id") int departmentId) {
-        Department department = departmentList.get(departmentId);
+        Department department = getDepartmentByIdOrThrow(departmentId);
+
         List<ApiCourseDTO> courseDTO = new ArrayList<>();
         int courseId = 0;
         for (Course course : department.getCourseList()) {
@@ -68,8 +101,9 @@ public class AppController {
     @GetMapping("/departments/{deptId}/courses/{courseId}/offerings")
     public List<ApiCourseOfferingDTO> getCourseOfferings(@PathVariable("deptId") int departmentId,
                                                          @PathVariable("courseId") int courseId) {
-        Department department = departmentList.get(departmentId);
-        Course course = department.getCourseByIndex(courseId);
+        Department department = getDepartmentByIdOrThrow(departmentId);
+        Course course = getCourseByIdOrThrow(department, courseId);
+
         List<ApiCourseOfferingDTO> courseOfferingDTO = new ArrayList<>();
         int courseOfferingId = 0;
         for (CourseOffering courseOffering : course.getCourseOfferings()) {
@@ -83,9 +117,10 @@ public class AppController {
     public List<ApiOfferingSectionDTO> getOfferingSections(@PathVariable("deptId") int departmentId,
                                                            @PathVariable("courseId") int courseId,
                                                            @PathVariable("offeringId") int offeringId) {
-        Department department = departmentList.get(departmentId);
-        Course course = department.getCourseByIndex(courseId);
-        CourseOffering offering = course.getCourseOfferingByIndex(offeringId);
+        Department department = getDepartmentByIdOrThrow(departmentId);
+        Course course = getCourseByIdOrThrow(department, courseId);
+        CourseOffering offering = getCourseOfferingByIdOrThrow(course, offeringId);
+
         List<ApiOfferingSectionDTO> offeringSectionDTO = new ArrayList<>();
         for (OfferingSection section : offering.getOfferingSections()) {
             ApiOfferingSectionDTO dto = ApiOfferingSectionDTO.makeFromOfferingSection(section);
@@ -124,8 +159,8 @@ public class AppController {
         WatcherCreate watcherCreate = ApiWatcherCreateDTO.toWatcherCreate(watcherCreateDTO);
         int deptId = (int) watcherCreate.getDeptId();
         int courseId = (int) watcherCreate.getCourseId();
-        Department department = departmentList.get(deptId);
-        Course course = department.getCourseByIndex(courseId);
+        Department department = getDepartmentByIdOrThrow(deptId);
+        Course course = getCourseByIdOrThrow(department, courseId);
 
         Watcher watcher = new Watcher(department, course);
         manager.addWatcher(watcher);
@@ -134,16 +169,45 @@ public class AppController {
 
         return ApiWatcherDTO.makeFromWatcher(watcher, departmentList, watcherId);
     }
+    private Watcher getWatcherByIdOrThrow(int watcherId){
+        Watcher watcher = manager.getWatcherById(watcherId);
+        if (watcher == null){
+            //String errorMessage = "Watcher ID " + watcherId + " not found.";
+            //throw new NotFoundException(errorMessage);
+            throw new IllegalArgumentException();
+        }
+        return watcher;
+    }
 
     @GetMapping("/watchers/{id}")
     public ApiWatcherDTO getOneWatcher(@PathVariable("id") int watcherId) {
-        Watcher watcher = manager.getWatcherById(watcherId);
+        Watcher watcher = getWatcherByIdOrThrow(watcherId);
         return ApiWatcherDTO.makeFromWatcher(watcher, departmentList, watcherId);
     }
 
     @DeleteMapping("/watchers/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWatcher(@PathVariable("id") int watcherId) {
-        manager.removeWatcherById(watcherId);
+        try {
+            manager.removeWatcherById(watcherId);
+        } catch (IllegalArgumentException e) {
+            //String errorMessage = "Watcher ID " + watcherId + " not found.";
+            //throw new NotFoundException(errorMessage);
+            throw new IllegalArgumentException();
+        }
+    }
+
+//    @ResponseStatus()
+//    static class NotFoundException extends RuntimeException {
+//        public NotFoundException(String msg) {
+//            super(msg);
+//            System.out.println(msg);
+//        }
+//    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND,
+            reason = "Request ID not found.")
+    @ExceptionHandler(IllegalArgumentException.class)
+    public void badIdExceptionHandler() {
     }
 }

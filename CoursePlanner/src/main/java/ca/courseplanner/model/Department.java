@@ -1,5 +1,7 @@
 package ca.courseplanner.model;
 
+import ca.courseplanner.controllers.AppController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +33,12 @@ public class Department {
         return courseList;
     }
 
-    public Course getCourseByIndex(int index) {
-        return courseList.get(index);
+    public Course getCourseById(int courseId) {
+        Course course = null;
+        if (courseId >= 0 && courseId < courseList.size()) {
+            course = courseList.get(courseId);
+        }
+        return course;
     }
 
     public String getName() {
