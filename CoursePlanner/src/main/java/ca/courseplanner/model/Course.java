@@ -2,19 +2,18 @@ package ca.courseplanner.model;
 
 import ca.courseplanner.model.observer.CourseObserver;
 import ca.courseplanner.model.observer.CourseSubject;
+import ca.courseplanner.model.sort.SortCourseOfferingBySemesterCode;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
  * Immutable class
  **/
 public class Course implements CourseSubject {
-    private String catalogNumber;
-    private List<CourseOffering> courseOfferings;
-    private List<CourseObserver> courseObservers;
+    private final String catalogNumber;
+    private final List<CourseOffering> courseOfferings;
+    private final List<CourseObserver> courseObservers;
 
     public Course(String catalogNumber) {
         this.catalogNumber = catalogNumber;
@@ -24,6 +23,9 @@ public class Course implements CourseSubject {
 
     public void addCourseOffering(CourseOffering courseOffering) {
         courseOfferings.add(courseOffering);
+    }
+    public void sortCourse(){
+        courseOfferings.sort(new SortCourseOfferingBySemesterCode());
     }
     public CourseOffering findCourseOffering(String semester, String location) {
         String offeringKey = semester + location;
@@ -49,6 +51,15 @@ public class Course implements CourseSubject {
 
     public String getCatalogNumber() {
         return catalogNumber;
+    }
+    public long getTotalEnrollmentInOneSemester(long semesterCode){
+        long totalStudents = 0;
+        for (CourseOffering courseOffering : courseOfferings){
+            if (courseOffering.getSemesterCode() == semesterCode){
+                totalStudents += courseOffering.getTotalEnrollmentInLecture();
+            }
+        }
+        return totalStudents;
     }
 
     @Override

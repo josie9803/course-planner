@@ -8,14 +8,8 @@ import ca.courseplanner.model.watcher.Watcher;
 import ca.courseplanner.model.watcher.WatcherCreate;
 import ca.courseplanner.model.watcher.WatcherManager;
 import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.NoHandlerFoundException;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,6 +121,18 @@ public class AppController {
             offeringSectionDTO.add(dto);
         }
         return offeringSectionDTO;
+    }
+
+    @GetMapping("stats/students-per-semester")
+    public List<ApiGraphDataPointDTO> getGraphData(@RequestParam(value="deptId") int deptId){
+        Department department = getDepartmentByIdOrThrow(deptId);
+        List<GraphDataPoint> graphDataPoints = department.createListOfDataPoint();
+
+        List<ApiGraphDataPointDTO> graphDataPointDTOList = new ArrayList<>();
+        for (GraphDataPoint graphDataPoint : graphDataPoints){
+            graphDataPointDTOList.add(ApiGraphDataPointDTO.makeFromGraphDataPoint(graphDataPoint));
+        }
+        return graphDataPointDTOList;
     }
 
     @PostMapping("/addoffering")

@@ -7,13 +7,15 @@ import java.util.*;
 import static ca.courseplanner.model.filehandling.CsvFileReader.*;
 
 public class DataFacade {
-    private List<OfferingData> offeringDataList;
-    private List<Department> departmentList;
+    private final List<OfferingData> offeringDataList;
+    private final List<Department> departmentList;
+
 
     public DataFacade(List<String[]> data) {
         this.offeringDataList = new ArrayList<>();
+        this.departmentList = new ArrayList<>();
         processCsvData(data);
-        processDepartments();
+        //processDepartments();
         processCoursesInDepartment();
     }
 
@@ -60,24 +62,24 @@ public class DataFacade {
         offeringDataList.sort(new SortOfferingDataByCourseName());
     }
 
-    private void processDepartments() {
-        departmentList = new ArrayList<>();
-        for (OfferingData offeringData : offeringDataList) {
-            String departmentName = offeringData.getSubjectName();
-            boolean departmentExists = false;
-
-            for (Department department : departmentList) {
-                if (department.getName().equals(departmentName)) {
-                    departmentExists = true;
-                    break;
-                }
-            }
-
-            if (!departmentExists) {
-                departmentList.add(new Department(departmentName));
-            }
-        }
-    }
+//    private void processDepartments() {
+//        departmentList = new ArrayList<>();
+//        for (OfferingData offeringData : offeringDataList) {
+//            String departmentName = offeringData.getSubjectName();
+//            boolean departmentExists = false;
+//
+//            for (Department department : departmentList) {
+//                if (department.getName().equals(departmentName)) {
+//                    departmentExists = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!departmentExists) {
+//                departmentList.add(new Department(departmentName));
+//            }
+//        }
+//    }
 
     private void processCoursesInDepartment() {
         for (OfferingData offeringData : offeringDataList) {
@@ -97,8 +99,7 @@ public class DataFacade {
         if (course == null) {
             course = new Course(data.getCatalogNumber());
             department.addCourse(course);
-            List<Course> courseList = department.getCourseList();
-            courseList.sort(new SortCourseByCatalogNumber());
+            department.sortCourse();
         }
 
         CourseOffering offering = course.findCourseOffering(data.getSemester(), data.getLocation());
@@ -109,8 +110,7 @@ public class DataFacade {
                     data.getInstructor(), data.getTerm(), data.getSemesterCode(), data.getYear());
             isNewOffering = true;
             course.addCourseOffering(offering);
-            List<CourseOffering> courseOfferingList = course.getCourseOfferings();
-            courseOfferingList.sort(new SortCourseOfferingBySemesterCode());
+            course.sortCourse();
         }
 
         boolean newSectionUpdated = updateOrCreateSection(offering, data);
@@ -120,6 +120,8 @@ public class DataFacade {
                     " with enrollment (" + data.getEnrollmentTotal() + " / " + data.getEnrollmentCap() + ") " +
                     "to offering " + data.getTerm() + " " + data.getYear());
         }
+
+        department.addSemesterCodeIfNotExisted(data.getSemesterCode());
     }
 
     private boolean updateOrCreateSection(CourseOffering offering, OfferingData data) {
