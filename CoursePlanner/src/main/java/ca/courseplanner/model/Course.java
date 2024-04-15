@@ -39,8 +39,12 @@ public class Course implements CourseSubject {
         return courseOfferings;
     }
 
-    public CourseOffering getCourseOfferingByIndex(int index) {
-        return courseOfferings.get(index);
+    public CourseOffering getCourseOfferingById(int courseOfferingId) {
+        CourseOffering courseOffering = null;
+        if (courseOfferingId >= 0 && courseOfferingId < courseOfferings.size()) {
+            courseOffering = courseOfferings.get(courseOfferingId);
+        }
+        return courseOffering;
     }
 
     public String getCatalogNumber() {

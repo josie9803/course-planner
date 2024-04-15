@@ -15,10 +15,19 @@ public class WatcherManager {
     }
 
     public Watcher getWatcherById(int id) {
-        return watchers.get(id - 1);
+        Watcher watcher = null;
+        int actualIndex = id - 1;
+        if (actualIndex >= 0 && actualIndex < watchers.size()){
+            watcher = watchers.get(actualIndex);
+        }
+        return watcher;
     }
 
     public void removeWatcherById(int id) {
-        watchers.remove(id - 1);
+        int actualIndex = id - 1;
+        if (actualIndex < 0 || actualIndex > watchers.size()) {
+            throw new IllegalArgumentException();
+        }
+        watchers.remove(actualIndex);
     }
 }
