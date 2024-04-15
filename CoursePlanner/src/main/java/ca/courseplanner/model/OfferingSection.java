@@ -1,7 +1,7 @@
 package ca.courseplanner.model;
 
 public class OfferingSection {
-    private String type;
+    private final String type;
     private int enrollmentCap;
     private int enrollmentTotal;
 

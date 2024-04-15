@@ -1,14 +1,14 @@
 package ca.courseplanner.model;
 
 public class OfferingData {
-    private String semester;
-    private String location;
+    private final String semester;
+    private final String location;
     private String instructor;
-    private String subjectName;
-    private String catalogNumber;
+    private final String subjectName;
+    private final String catalogNumber;
     private int enrollmentCap;
     private int enrollmentTotal;
-    private String component;
+    private final String component;
 
     public OfferingData(String semester, String subjectName,
                         String catalogNumber, String location,

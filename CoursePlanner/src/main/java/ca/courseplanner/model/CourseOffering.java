@@ -1,7 +1,6 @@
 package ca.courseplanner.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -9,13 +8,13 @@ import java.util.List;
  **/
 
 public class CourseOffering {
-    private String offeringKey;
-    private String location;
-    private String instructors;
-    private String term;
-    private long semesterCode;
-    private int year;
-    private List<OfferingSection> offeringSections;
+    private final String offeringKey;
+    private final String location;
+    private final String instructors;
+    private final String term;
+    private final long semesterCode;
+    private final int year;
+    private final List<OfferingSection> offeringSections;
 
     public CourseOffering(String offeringKey, String location, String instructors, String term,
                           long semesterCode, int year) {
@@ -65,6 +64,16 @@ public class CourseOffering {
 
     public int getYear() {
         return year;
+    }
+
+    public long getTotalEnrollmentInLecture(){
+        long totalStudents = 0;
+        for (OfferingSection offeringSection : offeringSections){
+            if (offeringSection.getType().equals("LEC")){
+                totalStudents += offeringSection.getEnrollmentTotal();
+            }
+        }
+        return totalStudents;
     }
 
     @Override

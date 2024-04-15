@@ -7,36 +7,35 @@ import java.util.List;
 public class Printer {
 
     public static void printToTerminal(List<OfferingData> offeringDataList) {
-        System.out.println(offeringDataList);
-//        OfferingData firstOfferingData = offeringDataList.get(0);
-//        String currentCourseName = firstOfferingData.getCourseName();
-//        String currentSemester = firstOfferingData.getSemester();
-//        String currentLocation = firstOfferingData.getLocation();
-//
-//        printCourseName(currentCourseName);
-//        printSectionInfo(firstOfferingData);
-//
-//        for (OfferingData offeringData : offeringDataList) {
-//            if (!offeringData.getCourseName().equals(currentCourseName)) {
-//                currentCourseName = offeringData.getCourseName();
-//                printCourseName(currentCourseName);
-//                printSectionInfo(offeringData);
-//                printCourseType(offeringData);
-//            } else if (offeringData.getCourseName().equals(currentCourseName)
-//                    && offeringData.getLocation().equals(currentLocation)
-//                    && offeringData.getSemester().equals(currentSemester)) {
-//
-//                printCourseType(offeringData);
-//            } else if (offeringData.getCourseName().equals(currentCourseName)
-//                    && (!offeringData.getLocation().equals(currentLocation)
-//                    || !offeringData.getSemester().equals(currentSemester))) {
-//
-//                printSectionInfo(offeringData);
-//                printCourseType(offeringData);
-//            }
-//            currentLocation = offeringData.getLocation();
-//            currentSemester = offeringData.getSemester();
-//        }
+        OfferingData firstOfferingData = offeringDataList.get(0);
+        String currentCourseName = firstOfferingData.getCourseName();
+        String currentSemester = firstOfferingData.getSemester();
+        String currentLocation = firstOfferingData.getLocation();
+
+        printCourseName(currentCourseName);
+        printSectionInfo(firstOfferingData);
+
+        for (OfferingData offeringData : offeringDataList) {
+            if (!offeringData.getCourseName().equals(currentCourseName)) {
+                currentCourseName = offeringData.getCourseName();
+                printCourseName(currentCourseName);
+                printSectionInfo(offeringData);
+                printCourseType(offeringData);
+            } else if (offeringData.getCourseName().equals(currentCourseName)
+                    && offeringData.getLocation().equals(currentLocation)
+                    && offeringData.getSemester().equals(currentSemester)) {
+
+                printCourseType(offeringData);
+            } else if (offeringData.getCourseName().equals(currentCourseName)
+                    && (!offeringData.getLocation().equals(currentLocation)
+                    || !offeringData.getSemester().equals(currentSemester))) {
+
+                printSectionInfo(offeringData);
+                printCourseType(offeringData);
+            }
+            currentLocation = offeringData.getLocation();
+            currentSemester = offeringData.getSemester();
+        }
     }
 
     private static void printCourseName(String currentCourseName) {
