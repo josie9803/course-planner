@@ -4,6 +4,10 @@ import ca.courseplanner.model.OfferingData;
 
 import java.util.List;
 
+/**
+ * Class that contains helper methods to print to terminal
+ */
+
 public class Printer {
 
     public static void printToTerminal(List<OfferingData> offeringDataList) {

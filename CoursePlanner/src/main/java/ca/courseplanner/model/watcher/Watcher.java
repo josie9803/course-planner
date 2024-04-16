@@ -7,6 +7,10 @@ import ca.courseplanner.model.observer.CourseObserver;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A concrete watcher class that use observer pattern and implements the observer interface
+ */
+
 public class Watcher implements CourseObserver {
     private Department department;
     private Course course;

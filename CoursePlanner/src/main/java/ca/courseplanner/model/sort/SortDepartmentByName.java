@@ -4,6 +4,10 @@ import ca.courseplanner.model.Department;
 
 import java.util.Comparator;
 
+/**
+ * Class that use comparator to sort department
+ */
+
 public class SortDepartmentByName implements Comparator<Department> {
 
     @Override

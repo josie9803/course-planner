@@ -6,16 +6,19 @@ import java.util.*;
 
 import static ca.courseplanner.model.filehandling.CsvFileReader.*;
 
+/**
+ * Class that using data facade pattern to get necessary data and acts as the unified layer
+ * between UI and models
+ */
+
 public class DataFacade {
     private final List<OfferingData> offeringDataList;
     private final List<Department> departmentList;
-
 
     public DataFacade(List<String[]> data) {
         this.offeringDataList = new ArrayList<>();
         this.departmentList = new ArrayList<>();
         processCsvData(data);
-        //processDepartments();
         processCoursesInDepartment();
     }
 
@@ -55,31 +58,13 @@ public class DataFacade {
         }
         sortOfferingDataList();
     }
-    private void sortOfferingDataList(){
+
+    private void sortOfferingDataList() {
         offeringDataList.sort(new SortOfferingDataByComponent());
         offeringDataList.sort(new SortOfferingDataByLocation());
         offeringDataList.sort(new SortOfferingDataBySemester());
         offeringDataList.sort(new SortOfferingDataByCourseName());
     }
-
-//    private void processDepartments() {
-//        departmentList = new ArrayList<>();
-//        for (OfferingData offeringData : offeringDataList) {
-//            String departmentName = offeringData.getSubjectName();
-//            boolean departmentExists = false;
-//
-//            for (Department department : departmentList) {
-//                if (department.getName().equals(departmentName)) {
-//                    departmentExists = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!departmentExists) {
-//                departmentList.add(new Department(departmentName));
-//            }
-//        }
-//    }
 
     private void processCoursesInDepartment() {
         for (OfferingData offeringData : offeringDataList) {
@@ -202,7 +187,7 @@ public class DataFacade {
     }
 
     private OfferingData findExistingOfferingData(String subjectName, String catalogNumber, String semester,
-                                              String location, String component) {
+                                                  String location, String component) {
         for (OfferingData offering : offeringDataList) {
             if (offering.getSubjectName().equals(subjectName) && offering.getCatalogNumber().equals(catalogNumber)
                     && offering.getSemester().equals(semester) && offering.getLocation().equals(location)

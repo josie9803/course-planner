@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Immutable class
+ * Immutable class that represents a available course offering, and it maintains a list of section
  **/
 
 public class CourseOffering {

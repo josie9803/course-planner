@@ -7,8 +7,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Immutable class
+ * Immutable class that represent one department, it maintains a list of course and semester
  */
+
 public class Department {
     private final String name;
     private final List<Course> courseList;

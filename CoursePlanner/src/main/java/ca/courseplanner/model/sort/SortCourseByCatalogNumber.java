@@ -4,6 +4,10 @@ import ca.courseplanner.model.Course;
 
 import java.util.Comparator;
 
+/**
+ * Class that use comparator to course
+ */
+
 public class SortCourseByCatalogNumber implements Comparator<Course> {
 
     @Override

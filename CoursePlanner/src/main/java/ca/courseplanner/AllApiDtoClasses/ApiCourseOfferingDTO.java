@@ -2,6 +2,10 @@ package ca.courseplanner.AllApiDtoClasses;
 
 import ca.courseplanner.model.CourseOffering;
 
+/**
+ * Data Transfer Object that represent a course offering
+ */
+
 public class ApiCourseOfferingDTO {
     public long courseOfferingId;
     public String location;

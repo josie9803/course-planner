@@ -2,6 +2,10 @@ package ca.courseplanner.AllApiDtoClasses;
 
 import ca.courseplanner.model.Department;
 
+/**
+ * Data Transfer Object that represent a department
+ */
+
 public class ApiDepartmentDTO {
     public long deptId;
     public String name;

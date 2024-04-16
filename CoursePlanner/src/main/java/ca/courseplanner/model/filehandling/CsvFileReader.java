@@ -3,6 +3,10 @@ package ca.courseplanner.model.filehandling;
 import java.io.*;
 import java.util.*;
 
+/**
+ * Class that read and parse the csv file in to list of string array
+ */
+
 public class CsvFileReader {
     public static final int SEMESTER_INDEX = 0;
     public static final int SUBJECT_NAME_INDEX = 1;

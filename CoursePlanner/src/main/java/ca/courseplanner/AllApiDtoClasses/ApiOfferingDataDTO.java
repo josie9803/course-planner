@@ -2,6 +2,10 @@ package ca.courseplanner.AllApiDtoClasses;
 
 import ca.courseplanner.model.OfferingData;
 
+/**
+ * Data Transfer Object that represent an offering data
+ */
+
 public class ApiOfferingDataDTO {
     public String semester;
     public String subjectName;

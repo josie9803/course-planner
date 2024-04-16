@@ -1,5 +1,9 @@
 package ca.courseplanner.model.watcher;
 
+/**
+ * Class that represents a newly created watcher
+ */
+
 public class WatcherCreate {
     private long deptId;
     private long courseId;

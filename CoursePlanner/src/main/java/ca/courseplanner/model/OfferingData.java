@@ -1,5 +1,9 @@
 package ca.courseplanner.model;
 
+/**
+ * Class that represent a specific offering
+ */
+
 public class OfferingData {
     private final String semester;
     private final String location;

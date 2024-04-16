@@ -2,6 +2,10 @@ package ca.courseplanner.AllApiDtoClasses;
 
 import ca.courseplanner.model.GraphDataPoint;
 
+/**
+ * Data Transfer Object that represent a data point for courses taken in semester
+ */
+
 public class ApiGraphDataPointDTO {
     public long semesterCode;
     public long totalCoursesTaken;

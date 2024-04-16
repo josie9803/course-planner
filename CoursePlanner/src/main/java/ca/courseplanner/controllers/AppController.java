@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller layer to implement REST Web APIs
+ */
+
 @RestController
 @RequestMapping("/api")
 public class AppController {
@@ -56,16 +60,12 @@ public class AppController {
             return departmentList.get(departmentId);
         }
         else{
-            //String errorMessage = "Department ID " + departmentId + " not found.";
-            //throw new NotFoundException(errorMessage);
             throw new IllegalArgumentException();
         }
     }
     private Course getCourseByIdOrThrow(Department department, int courseId){
         Course course = department.getCourseById(courseId);
         if (course == null){
-//            String errorMessage = "Course ID " + courseId + " not found.";
-//            throw new NotFoundException(errorMessage);
             throw new IllegalArgumentException();
         }
         return course;
@@ -73,8 +73,6 @@ public class AppController {
     private CourseOffering getCourseOfferingByIdOrThrow(Course course, int courseOfferingId){
         CourseOffering courseOffering = course.getCourseOfferingById(courseOfferingId);
         if (courseOffering == null){
-            //String errorMessage = "Course Offering ID " + courseOfferingId + " not found.";
-            //throw new NotFoundException(errorMessage);
             throw new IllegalArgumentException();
         }
         return courseOffering;
@@ -178,8 +176,6 @@ public class AppController {
     private Watcher getWatcherByIdOrThrow(int watcherId){
         Watcher watcher = manager.getWatcherById(watcherId);
         if (watcher == null){
-            //String errorMessage = "Watcher ID " + watcherId + " not found.";
-            //throw new NotFoundException(errorMessage);
             throw new IllegalArgumentException();
         }
         return watcher;
@@ -197,19 +193,9 @@ public class AppController {
         try {
             manager.removeWatcherById(watcherId);
         } catch (IllegalArgumentException e) {
-            //String errorMessage = "Watcher ID " + watcherId + " not found.";
-            //throw new NotFoundException(errorMessage);
             throw new IllegalArgumentException();
         }
     }
-
-//    @ResponseStatus()
-//    static class NotFoundException extends RuntimeException {
-//        public NotFoundException(String msg) {
-//            super(msg);
-//            System.out.println(msg);
-//        }
-//    }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND,
             reason = "Request ID not found.")

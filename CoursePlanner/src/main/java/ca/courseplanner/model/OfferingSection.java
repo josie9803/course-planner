@@ -1,5 +1,9 @@
 package ca.courseplanner.model;
 
+/**
+ * Class that represents a offering section of an available course offering
+ */
+
 public class OfferingSection {
     private final String type;
     private int enrollmentCap;

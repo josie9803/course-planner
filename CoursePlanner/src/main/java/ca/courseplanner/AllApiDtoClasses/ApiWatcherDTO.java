@@ -4,6 +4,10 @@ import ca.courseplanner.model.watcher.Watcher;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object that represent a watcher
+ */
+
 public class ApiWatcherDTO {
     public long id;
     public ApiDepartmentDTO department;

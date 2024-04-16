@@ -2,6 +2,10 @@ package ca.courseplanner.AllApiDtoClasses;
 
 import ca.courseplanner.model.OfferingSection;
 
+/**
+ * Data Transfer Object that represent an offering section
+ */
+
 public class ApiOfferingSectionDTO {
     public String type;
     public int enrollmentCap;

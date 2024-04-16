@@ -1,5 +1,9 @@
 package ca.courseplanner.model;
 
+/**
+ * Class that handles the total courses in a semester
+ */
+
 public class GraphDataPoint {
     private final long semesterCode;
     private final long totalCoursesTaken;

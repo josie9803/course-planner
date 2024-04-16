@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Immutable class
+ * Immutable class that represents a course and maintains a list of available course offering.
+ * It uses observer pattern, a concrete subject that implements the course subject interface
+ * and maintains a list of observers
  **/
+
 public class Course implements CourseSubject {
     private final String catalogNumber;
     private final List<CourseOffering> courseOfferings;

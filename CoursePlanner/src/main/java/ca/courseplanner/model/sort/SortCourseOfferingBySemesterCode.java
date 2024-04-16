@@ -4,6 +4,10 @@ import ca.courseplanner.model.CourseOffering;
 
 import java.util.Comparator;
 
+/**
+ * Class that use comparator to sort available course offering
+ */
+
 public class SortCourseOfferingBySemesterCode implements Comparator<CourseOffering> {
 
     @Override

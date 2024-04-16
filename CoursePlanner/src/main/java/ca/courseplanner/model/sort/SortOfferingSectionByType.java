@@ -4,6 +4,10 @@ import ca.courseplanner.model.OfferingSection;
 
 import java.util.Comparator;
 
+/**
+ * Class that use comparator to sort offering section
+ */
+
 public class SortOfferingSectionByType implements Comparator<OfferingSection> {
 
     @Override
